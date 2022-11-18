@@ -22,12 +22,6 @@ impl Float for f64 {
     }
 }
 
-pub trait PointOps {
-    type Float;
-
-    fn add(self, other: Self) -> Self;
-}
-
 pub trait VectorOps {
     type Float;
 
@@ -38,16 +32,17 @@ pub trait VectorOps {
     fn normalize(self) -> Self;
 }
 
+pub trait MatrixOps {
+    type Float;
+
+    fn add(self, other: Self) -> Self;
+    fn sub(self, other: Self) -> Self;
+    fn scale(self, other: Self::Float) -> Self;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Statics
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-pub mod point {
-    use super::PointOps;
-    pub fn add<T: PointOps>(point1: T, point2: T) -> T {
-        point1.add(point2)
-    }
-}
 
 pub mod vector {
     use super::VectorOps;
@@ -68,270 +63,16 @@ pub mod vector {
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Point2
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, PartialOrd)]
-pub struct Point2<T: Float> {
-    pub x: T,
-    pub y: T,
-}
-
-impl<T> Point2<T>
-where
-    T: Float,
-{
-    pub fn new(x: T, y: T) -> Self {
-        Self { x, y }
+pub mod matrix {
+    use super::MatrixOps;
+    pub fn add<T: MatrixOps>(matrix1: T, matrix2: T) -> T {
+        matrix1.add(matrix2)
     }
-}
-
-impl<T> PointOps for Point2<T>
-where
-    T: Float,
-    T: Add<Output = T>,
-{
-    type Float = T;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+    pub fn sub<T: MatrixOps>(matrix1: T, matrix2: T) -> T {
+        matrix1.sub(matrix2)
     }
-}
-
-impl<T> Neg for Point2<T>
-where
-    T: Neg<Output = T>,
-    T: Float,
-{
-    type Output = Point2<T>;
-
-    fn neg(self) -> Self::Output {
-        Point2 {
-            x: -self.x,
-            y: -self.y,
-        }
-    }
-}
-
-impl<T> From<[T; 2]> for Point2<T>
-where
-    T: Float,
-    T: Copy,
-    T: Clone,
-{
-    fn from(value: [T; 2]) -> Self {
-        Point2 {
-            x: value[0],
-            y: value[1],
-        }
-    }
-}
-
-impl<T> From<(T, T)> for Point2<T>
-where
-    T: Float,
-    T: Copy,
-    T: Clone,
-{
-    fn from(value: (T, T)) -> Self {
-        Point2 {
-            x: value.0,
-            y: value.1,
-        }
-    }
-}
-
-impl<T> From<Point3<T>> for Point2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point3<T>) -> Self {
-        Point2 {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
-impl<T> From<Vec2<T>> for Point2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec2<T>) -> Self {
-        Point2 {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
-impl<T> From<Vec3<T>> for Point2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec3<T>) -> Self {
-        Point2 {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
-impl<T> From<Vec4<T>> for Point2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec4<T>) -> Self {
-        Point2 {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Point3
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, PartialOrd)]
-pub struct Point3<T: Float> {
-    pub x: T,
-    pub y: T,
-    pub z: T,
-}
-
-impl<T> Point3<T>
-where
-    T: Float,
-{
-    pub fn new(x: T, y: T, z: T) -> Self {
-        Self { x, y, z }
-    }
-}
-
-impl<T> PointOps for Point3<T>
-where
-    T: Float,
-    T: Add<Output = T>,
-{
-    type Float = T;
-
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-}
-
-impl<T> Neg for Point3<T>
-where
-    T: Neg<Output = T>,
-    T: Float,
-{
-    type Output = Point3<T>;
-
-    fn neg(self) -> Self::Output {
-        Point3 {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-        }
-    }
-}
-
-impl<T> From<[T; 3]> for Point3<T>
-where
-    T: Float,
-    T: Copy,
-    T: Clone,
-{
-    fn from(value: [T; 3]) -> Self {
-        Point3 {
-            x: value[0],
-            y: value[1],
-            z: value[2],
-        }
-    }
-}
-
-impl<T> From<(T, T, T)> for Point3<T>
-where
-    T: Float,
-    T: Copy,
-    T: Clone,
-{
-    fn from(value: (T, T, T)) -> Self {
-        Point3 {
-            x: value.0,
-            y: value.1,
-            z: value.2,
-        }
-    }
-}
-
-impl<T> From<Point2<T>> for Point3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point2<T>) -> Self {
-        Point3 {
-            x: value.x,
-            y: value.y,
-            z: T::default(),
-        }
-    }
-}
-
-impl<T> From<Vec2<T>> for Point3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec2<T>) -> Self {
-        Point3 {
-            x: value.x,
-            y: value.y,
-            z: T::default(),
-        }
-    }
-}
-
-impl<T> From<Vec3<T>> for Point3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec3<T>) -> Self {
-        Point3 {
-            x: value.x,
-            y: value.y,
-            z: value.z,
-        }
-    }
-}
-
-impl<T> From<Vec4<T>> for Point3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Vec4<T>) -> Self {
-        Point3 {
-            x: value.x,
-            y: value.y,
-            z: value.z,
-        }
+    pub fn scale<T: MatrixOps>(matrix1: T, scalar: T::Float) -> T {
+        matrix1.scale(scalar)
     }
 }
 
@@ -366,24 +107,15 @@ where
     type Float = T;
 
     fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
+        self + other
     }
 
     fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
+        self - other
     }
 
     fn scale(self, other: T) -> Self {
-        Self {
-            x: self.x * other,
-            y: self.y * other,
-        }
+        self * other
     }
 
     fn magnitude(self) -> Self::Float {
@@ -414,6 +146,52 @@ where
     }
 }
 
+impl<T> Add for Vec2<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Vec2<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+impl<T> Sub for Vec2<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Vec2<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
+impl<T> Mul<T> for Vec2<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Vec2<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+
 impl<T> From<[T; 2]> for Vec2<T>
 where
     T: Float,
@@ -438,32 +216,6 @@ where
         Vec2 {
             x: value.0,
             y: value.1,
-        }
-    }
-}
-
-impl<T> From<Point2<T>> for Vec2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point2<T>) -> Self {
-        Vec2 {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
-impl<T> From<Point3<T>> for Vec2<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point3<T>) -> Self {
-        Vec2 {
-            x: value.x,
-            y: value.y,
         }
     }
 }
@@ -526,27 +278,15 @@ where
     type Float = T;
 
     fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
+        self + other
     }
 
     fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
+        self - other
     }
 
     fn scale(self, other: Self::Float) -> Self {
-        Self {
-            x: self.x * other,
-            y: self.y * other,
-            z: self.z * other,
-        }
+        self * other
     }
 
     fn magnitude(self) -> Self::Float {
@@ -579,6 +319,55 @@ where
     }
 }
 
+impl<T> Add for Vec3<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Vec3<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<T> Sub for Vec3<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Vec3<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<T> Mul<T> for Vec3<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Vec3<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 impl<T> From<[T; 3]> for Vec3<T>
 where
     T: Float,
@@ -605,34 +394,6 @@ where
             x: value.0,
             y: value.1,
             z: value.2,
-        }
-    }
-}
-
-impl<T> From<Point2<T>> for Vec3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point2<T>) -> Self {
-        Vec3 {
-            x: value.x,
-            y: value.y,
-            z: T::default(),
-        }
-    }
-}
-
-impl<T> From<Point3<T>> for Vec3<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point3<T>) -> Self {
-        Vec3 {
-            x: value.x,
-            y: value.y,
-            z: value.z,
         }
     }
 }
@@ -698,30 +459,15 @@ where
     type Float = T;
 
     fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-            w: self.w + other.w,
-        }
+        self + other
     }
 
     fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-            w: self.w - other.w,
-        }
+        self - other
     }
 
     fn scale(self, other: Self::Float) -> Self {
-        Self {
-            x: self.x * other,
-            y: self.y * other,
-            z: self.z * other,
-            w: self.w * other,
-        }
+        self * other
     }
 
     fn magnitude(self) -> Self::Float {
@@ -756,6 +502,58 @@ where
     }
 }
 
+impl<T> Add for Vec4<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Vec4<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+            w: self.w + rhs.w,
+        }
+    }
+}
+
+impl<T> Sub for Vec4<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Vec4<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+            w: self.w - rhs.w,
+        }
+    }
+}
+
+impl<T> Mul<T> for Vec4<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Vec4<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w * rhs,
+        }
+    }
+}
+
 impl<T> From<[T; 4]> for Vec4<T>
 where
     T: Float,
@@ -784,36 +582,6 @@ where
             y: value.1,
             z: value.2,
             w: value.3,
-        }
-    }
-}
-
-impl<T> From<Point2<T>> for Vec4<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point2<T>) -> Self {
-        Vec4 {
-            x: value.x,
-            y: value.y,
-            z: T::default(),
-            w: T::default(),
-        }
-    }
-}
-
-impl<T> From<Point3<T>> for Vec4<T>
-where
-    T: Float,
-    T: Default,
-{
-    fn from(value: Point3<T>) -> Self {
-        Vec4 {
-            x: value.x,
-            y: value.y,
-            z: value.z,
-            w: T::default(),
         }
     }
 }
@@ -868,6 +636,74 @@ where
     }
 }
 
+impl<T> MatrixOps for Mat2<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Sub<Output = T>,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Float = T;
+    fn add(self, other: Self) -> Self {
+        self + other
+    }
+
+    fn sub(self, other: Self) -> Self {
+        self - other
+    }
+
+    fn scale(self, other: T) -> Self {
+        self * other
+    }
+}
+
+impl<T> Add for Mat2<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Mat2<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+impl<T> Sub for Mat2<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Mat2<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
+impl<T> Mul<T> for Mat2<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Mat2<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+
 impl<T> From<[[T; 2]; 2]> for Mat2<T>
 where
     T: Float,
@@ -914,6 +750,77 @@ where
 {
     pub fn new(x: Vec3<T>, y: Vec3<T>, z: Vec3<T>) -> Self {
         Mat3 { x, y, z }
+    }
+}
+
+impl<T> MatrixOps for Mat3<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Sub<Output = T>,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Float = T;
+    fn add(self, other: Self) -> Self {
+        self + other
+    }
+
+    fn sub(self, other: Self) -> Self {
+        self - other
+    }
+
+    fn scale(self, other: T) -> Self {
+        self * other
+    }
+}
+
+impl<T> Add for Mat3<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Mat3<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl<T> Sub for Mat3<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Mat3<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl<T> Mul<T> for Mat3<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Mat3<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
     }
 }
 
@@ -966,6 +873,80 @@ where
 {
     pub fn new(x: Vec4<T>, y: Vec4<T>, z: Vec4<T>, w: Vec4<T>) -> Self {
         Mat4 { x, y, z, w }
+    }
+}
+
+impl<T> MatrixOps for Mat4<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Sub<Output = T>,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Float = T;
+    fn add(self, other: Self) -> Self {
+        self + other
+    }
+
+    fn sub(self, other: Self) -> Self {
+        self - other
+    }
+
+    fn scale(self, other: T) -> Self {
+        self * other
+    }
+}
+
+impl<T> Add for Mat4<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Output = Mat4<T>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+            w: self.w + rhs.w,
+        }
+    }
+}
+
+impl<T> Sub for Mat4<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+{
+    type Output = Mat4<T>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+            w: self.w - rhs.w,
+        }
+    }
+}
+
+impl<T> Mul<T> for Mat4<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    type Output = Mat4<T>;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w * rhs,
+        }
     }
 }
 

@@ -5,61 +5,23 @@ use math::*;
 fn main() {
     println!("Hi.");
 
-    // let point1 = Vec2::new(1.0, 2.0);
-    // let point2 = Vec2::new(3.0, 4.0);
+    let vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    let vec2 = Vec4::new(6.0, 7.0, 8.0, 9.0);
+    let _res = vec1 + vec2;
+    let _res = vec1.add(vec2);
+    let _res = vector::add(vec1, vec2);
 
-    let point1 = Point2::new(2.0, 3.0);
-    let point2 = Point2::new(3.0, 2.0);
+    let mat1 = Mat4::new(vec1, vec2, vec1, vec2);
+    let mat2 = Mat4::new(vec2, vec1, vec2, vec1);
+    let _res = mat1 + mat2;
+    let _res = mat1.add(mat2);
+    let _res = matrix::add(mat2, mat2);
 
-    let res = point::add(point1, point2);
+    let _res = matrix::scale(mat1, 5.0);
+    let _res = mat1.scale(5.0);
+    let res = mat1 * 5.0;
 
-    println!("res:{:?}, point1: {:?}, point2: {:?}", res, point1, point2);
-
-    let res = point1.add(point2);
-
-    println!("res:{:?}, point1: {:?}, point2: {:?}", res, point1, point2);
-}
-
-#[test]
-fn test_point_2() {
-    use crate::math::*;
-
-    //test new
-    let point = Point2::new(2.0, 1.0);
-    assert_eq!(point, (2.0, 1.0).into());
-
-    //test default
-    let point = Point2::default();
-    assert_eq!(point, (0.0, 0.0).into());
-
-    //test add
-    let point = point.add((1.0, 5.0).into());
-    assert_eq!(point, (1.0, 5.0).into());
-
-    //test negation
-    let point = -point;
-    assert_eq!(point, (-1.0, -5.0).into());
-}
-
-#[test]
-fn test_point_3() {
-    use crate::math::*;
-
-    //test new
-    let point = Point3::new(3.0, 2.0, 1.0);
-    assert_eq!(point, (3.0, 2.0, 1.0).into());
-
-    //test default
-    let point = Point3::default();
-    assert_eq!(point, (0.0, 0.0, 0.0).into());
-
-    //test add
-    let point = point.add((5.0, 4.0, 3.0).into());
-    assert_eq!(point, (5.0, 4.0, 3.0).into());
-
-    //test negation
-    let point = -point;
-    assert_eq!(point, (-5.0, -4.0, -3.0).into());
+    println!("mat4: {:?}", res);
 }
 
 #[test]
@@ -176,61 +138,15 @@ fn test_vec_4() {
 }
 
 #[test]
-fn test_point_2_conversions() {
-    use crate::math::*;
-
-    let p3 = Point3::new(1., 2., 3.);
-    let v2 = Vec2::new(99.9, 72.1);
-    let v3 = Vec3::new(-1.1, 2.2, -3.3);
-    let v4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
-
-    let test1: Point2<_> = p3.into();
-    let test2: Point2<_> = v2.into();
-    let test3: Point2<_> = v3.into();
-    let test4: Point2<_> = v4.into();
-
-    assert_eq!(test1, (1., 2.).into());
-    assert_eq!(test2, [99.9, 72.1].into());
-    assert_eq!(test3, Point2::new(-1.1, 2.2));
-    assert_eq!(test4, Point2::new(1.0, 2.0));
-}
-
-#[test]
-fn test_point_3_conversions() {
-    use crate::math::*;
-
-    let p2 = Point2::new(1., 2.);
-    let v2 = Vec2::new(99.9, 72.1);
-    let v3 = Vec3::new(-1.1, 2.2, -3.3);
-    let v4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
-
-    let test1: Point3<_> = p2.into();
-    let test2: Point3<_> = v2.into();
-    let test3: Point3<_> = v3.into();
-    let test4: Point3<_> = v4.into();
-
-    assert_eq!(test1, (1., 2., 0.).into());
-    assert_eq!(test2, [99.9, 72.1, 0.0].into());
-    assert_eq!(test3, Point3::new(-1.1, 2.2, -3.3));
-    assert_eq!(test4, Point3::new(1.0, 2.0, 3.0));
-}
-
-#[test]
 fn test_vec_2_conversions() {
     use crate::math::*;
 
-    let p2 = Point2::new(1., 2.);
-    let p3 = Point3::new(99.9, 72.1, 1.0);
     let v3 = Vec3::new(-1.1, 2.2, -3.3);
     let v4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
 
-    let test1: Vec2<_> = p2.into();
-    let test2: Vec2<_> = p3.into();
     let test3: Vec2<_> = v3.into();
     let test4: Vec2<_> = v4.into();
 
-    assert_eq!(test1, (1., 2.).into());
-    assert_eq!(test2, [99.9, 72.1].into());
     assert_eq!(test3, Vec2::new(-1.1, 2.2));
     assert_eq!(test4, Vec2::new(1.0, 2.0));
 }
@@ -239,18 +155,12 @@ fn test_vec_2_conversions() {
 fn test_vec_3_conversions() {
     use crate::math::*;
 
-    let p2 = Point2::new(1., 2.);
-    let p3 = Point3::new(99.9, 72.1, 7.2);
     let v2 = Vec2::new(-1.1, 2.2);
     let v4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
 
-    let test1: Vec3<_> = p2.into();
-    let test2: Vec3<_> = p3.into();
     let test3: Vec3<_> = v2.into();
     let test4: Vec3<_> = v4.into();
 
-    assert_eq!(test1, (1., 2., 0.).into());
-    assert_eq!(test2, [99.9, 72.1, 7.2].into());
     assert_eq!(test3, Vec3::new(-1.1, 2.2, 0.0));
     assert_eq!(test4, Vec3::new(1.0, 2.0, 3.0));
 }
@@ -259,18 +169,12 @@ fn test_vec_3_conversions() {
 fn test_vec_4_conversions() {
     use crate::math::*;
 
-    let p2 = Point2::new(1., 2.);
-    let p3 = Point3::new(99.9, 72.1, 7.2);
     let v2 = Vec2::new(-1.1, 2.2);
     let v3 = Vec3::new(1.0, 2.0, 3.0);
 
-    let test1: Vec4<_> = p2.into();
-    let test2: Vec4<_> = p3.into();
     let test3: Vec4<_> = v2.into();
     let test4: Vec4<_> = v3.into();
 
-    assert_eq!(test1, (1., 2., 0., 0.).into());
-    assert_eq!(test2, [99.9, 72.1, 7.2, 0.].into());
     assert_eq!(test3, Vec4::new(-1.1, 2.2, 0.0, 0.0));
     assert_eq!(test4, Vec4::new(1.0, 2.0, 3.0, 0.0));
 }
