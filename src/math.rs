@@ -6,25 +6,65 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 // Traits
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-pub trait Float {}
-
-impl Float for f32 {}
-
-impl Float for f64 {}
-
-pub trait Sqrt {
-    fn sqrt(&self) -> Self;
+pub trait Float {
+    fn sqrt(self) -> Self;
 }
 
-impl Sqrt for f32 {
-    fn sqrt(&self) -> Self {
-        f32::sqrt(*self)
+impl Float for f32 {
+    fn sqrt(self) -> Self {
+        f32::sqrt(self)
     }
 }
 
-impl Sqrt for f64 {
-    fn sqrt(&self) -> Self {
-        f64::sqrt(*self)
+impl Float for f64 {
+    fn sqrt(self) -> Self {
+        f64::sqrt(self)
+    }
+}
+
+pub trait PointOps {
+    type Float;
+
+    fn add(self, other: Self) -> Self;
+}
+
+pub trait VectorOps {
+    type Float;
+
+    fn add(self, other: Self) -> Self;
+    fn sub(self, other: Self) -> Self;
+    fn scale(self, other: Self::Float) -> Self;
+    fn magnitude(self) -> Self::Float;
+    fn normalize(self) -> Self;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Statics
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+pub mod point {
+    use super::PointOps;
+    pub fn add<T: PointOps>(point1: T, point2: T) -> T {
+        point1.add(point2)
+    }
+}
+
+pub mod vector {
+    use super::VectorOps;
+    pub fn add<T: VectorOps>(vector1: T, vector2: T) -> T {
+        vector1.add(vector2)
+    }
+    pub fn sub<T: VectorOps>(vector1: T, vector2: T) -> T {
+        vector1.sub(vector2)
+    }
+    pub fn scale<T: VectorOps>(vector: T, scalar: <T as VectorOps>::Float) -> T {
+        vector.scale(scalar)
+    }
+    pub fn magnitude<T: VectorOps>(vector: T) -> <T as VectorOps>::Float {
+        vector.magnitude()
+    }
+    pub fn normalize<T: VectorOps>(vector: T) -> T {
+        vector.normalize()
     }
 }
 
@@ -40,17 +80,24 @@ pub struct Point2<T: Float> {
 
 impl<T> Point2<T>
 where
-    T: Add<Output = T>,
     T: Float,
-    T: Copy,
 {
     pub fn new(x: T, y: T) -> Self {
-        Point2 { x, y }
+        Self { x, y }
     }
-    pub fn add(&self, vector: Vec2<T>) -> Point2<T> {
-        Point2 {
-            x: self.x + vector.x,
-            y: self.y + vector.y,
+}
+
+impl<T> PointOps for Point2<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Float = T;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
         }
     }
 }
@@ -163,20 +210,25 @@ pub struct Point3<T: Float> {
 
 impl<T> Point3<T>
 where
-    T: Add<Output = T>,
-    T: Sub<Output = T>,
-    T: Mul<Output = T>,
     T: Float,
-    T: Copy,
 {
     pub fn new(x: T, y: T, z: T) -> Self {
-        Point3 { x, y, z }
+        Self { x, y, z }
     }
-    pub fn add(&self, vector: Vec3<T>) -> Point3<T> {
-        Point3 {
-            x: self.x + vector.x,
-            y: self.y + vector.y,
-            z: self.z + vector.z,
+}
+
+impl<T> PointOps for Point3<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+{
+    type Float = T;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
         }
     }
 }
@@ -295,46 +347,52 @@ pub struct Vec2<T: Float> {
 
 impl<T> Vec2<T>
 where
+    T: Float,
+{
+    pub fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T> VectorOps for Vec2<T>
+where
+    T: Float,
     T: Add<Output = T>,
     T: Sub<Output = T>,
     T: Mul<Output = T>,
     T: Div<Output = T>,
-    T: Float,
-    T: Sqrt,
     T: Copy,
 {
-    pub fn new(x: T, y: T) -> Self {
-        Vec2 { x, y }
-    }
+    type Float = T;
 
-    pub fn add(&self, vector: Vec2<T>) -> Self {
-        Vec2 {
-            x: self.x + vector.x,
-            y: self.y + vector.y,
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
         }
     }
 
-    pub fn sub(&self, vector: Vec2<T>) -> Self {
-        Vec2 {
-            x: self.x - vector.x,
-            y: self.y - vector.y,
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
         }
     }
 
-    pub fn scale(&self, scalar: T) -> Self {
-        Vec2 {
-            x: self.x * scalar,
-            y: self.y * scalar,
+    fn scale(self, other: T) -> Self {
+        Self {
+            x: self.x * other,
+            y: self.y * other,
         }
     }
 
-    pub fn magnitude(&self) -> T {
-        T::sqrt(&((self.x * self.x) + (self.y * self.y)))
+    fn magnitude(self) -> Self::Float {
+        Float::sqrt((self.x * self.x) + (self.y * self.y))
     }
 
-    pub fn normalize(&self) -> Vec2<T> {
+    fn normalize(self) -> Self {
         let mag = self.magnitude();
-        Vec2 {
+        Self {
             x: self.x / mag,
             y: self.y / mag,
         }
@@ -449,49 +507,55 @@ pub struct Vec3<T: Float> {
 
 impl<T> Vec3<T>
 where
+    T: Float,
+{
+    pub fn new(x: T, y: T, z: T) -> Self {
+        Self { x, y, z }
+    }
+}
+
+impl<T> VectorOps for Vec3<T>
+where
+    T: Float,
     T: Add<Output = T>,
     T: Sub<Output = T>,
     T: Mul<Output = T>,
     T: Div<Output = T>,
-    T: Float,
-    T: Sqrt,
     T: Copy,
 {
-    pub fn new(x: T, y: T, z: T) -> Self {
-        Vec3 { x, y, z }
-    }
+    type Float = T;
 
-    pub fn add(&self, vector: Vec3<T>) -> Self {
-        Vec3 {
-            x: self.x + vector.x,
-            y: self.y + vector.y,
-            z: self.z + vector.z,
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
         }
     }
 
-    pub fn sub(&self, vector: Vec3<T>) -> Self {
-        Vec3 {
-            x: self.x - vector.x,
-            y: self.y - vector.y,
-            z: self.z - vector.z,
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
         }
     }
 
-    pub fn scale(&self, scalar: T) -> Self {
-        Vec3 {
-            x: self.x * scalar,
-            y: self.y * scalar,
-            z: self.z * scalar,
+    fn scale(self, other: Self::Float) -> Self {
+        Self {
+            x: self.x * other,
+            y: self.y * other,
+            z: self.z * other,
         }
     }
 
-    pub fn magnitude(&self) -> T {
-        T::sqrt(&((self.x * self.x) + (self.y * self.y) + (self.z * self.z)))
+    fn magnitude(self) -> Self::Float {
+        Float::sqrt((self.x * self.x) + (self.y * self.y) + (self.z * self.z))
     }
 
-    pub fn normalize(&self) -> Vec3<T> {
+    fn normalize(self) -> Self {
         let mag = self.magnitude();
-        Vec3 {
+        Self {
             x: self.x / mag,
             y: self.y / mag,
             z: self.z / mag,
@@ -615,52 +679,58 @@ pub struct Vec4<T: Float> {
 
 impl<T> Vec4<T>
 where
+    T: Float,
+{
+    pub fn new(x: T, y: T, z: T, w: T) -> Self {
+        Self { x, y, z, w }
+    }
+}
+
+impl<T> VectorOps for Vec4<T>
+where
+    T: Float,
     T: Add<Output = T>,
     T: Sub<Output = T>,
     T: Mul<Output = T>,
     T: Div<Output = T>,
-    T: Float,
-    T: Sqrt,
     T: Copy,
 {
-    pub fn new(x: T, y: T, z: T, w: T) -> Self {
-        Vec4 { x, y, z, w }
-    }
+    type Float = T;
 
-    pub fn add(&self, vector: Vec4<T>) -> Self {
-        Vec4 {
-            x: self.x + vector.x,
-            y: self.y + vector.y,
-            z: self.z + vector.z,
-            w: self.w + vector.w,
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+            w: self.w + other.w,
         }
     }
 
-    pub fn sub(&self, vector: Vec4<T>) -> Self {
-        Vec4 {
-            x: self.x - vector.x,
-            y: self.y - vector.y,
-            z: self.z - vector.z,
-            w: self.w - vector.w,
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+            w: self.w - other.w,
         }
     }
 
-    pub fn scale(&self, scalar: T) -> Self {
-        Vec4 {
-            x: self.x * scalar,
-            y: self.y * scalar,
-            z: self.z * scalar,
-            w: self.w * scalar,
+    fn scale(self, other: Self::Float) -> Self {
+        Self {
+            x: self.x * other,
+            y: self.y * other,
+            z: self.z * other,
+            w: self.w * other,
         }
     }
 
-    pub fn magnitude(&self) -> T {
-        T::sqrt(&((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)))
+    fn magnitude(self) -> Self::Float {
+        Float::sqrt((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w))
     }
 
-    pub fn normalize(&self) -> Vec4<T> {
+    fn normalize(self) -> Self {
         let mag = self.magnitude();
-        Vec4 {
+        Self {
             x: self.x / mag,
             y: self.y / mag,
             z: self.z / mag,

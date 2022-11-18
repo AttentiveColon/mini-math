@@ -1,7 +1,23 @@
 mod math;
+use math::vector;
+use math::*;
 
 fn main() {
     println!("Hi.");
+
+    // let point1 = Vec2::new(1.0, 2.0);
+    // let point2 = Vec2::new(3.0, 4.0);
+
+    let point1 = Point2::new(2.0, 3.0);
+    let point2 = Point2::new(3.0, 2.0);
+
+    let res = point::add(point1, point2);
+
+    println!("res:{:?}, point1: {:?}, point2: {:?}", res, point1, point2);
+
+    let res = point1.add(point2);
+
+    println!("res:{:?}, point1: {:?}, point2: {:?}", res, point1, point2);
 }
 
 #[test]
@@ -76,6 +92,7 @@ fn test_vec_2() {
 
     //test magnitude
     let mag = vector.magnitude();
+    println!("mag: {}", mag);
     assert!(f32::abs(mag - 32.01562) < f32::EPSILON);
 
     //test normalize
