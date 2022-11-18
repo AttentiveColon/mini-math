@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Traits
@@ -8,17 +8,35 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 pub trait Float {
     fn sqrt(self) -> Self;
+    fn one() -> Self;
+    fn zero() -> Self;
 }
 
 impl Float for f32 {
     fn sqrt(self) -> Self {
         f32::sqrt(self)
     }
+
+    fn one() -> Self {
+        1.0f32
+    }
+
+    fn zero() -> Self {
+        0.0f32
+    }
 }
 
 impl Float for f64 {
     fn sqrt(self) -> Self {
         f64::sqrt(self)
+    }
+
+    fn one() -> Self {
+        1.0f64
+    }
+
+    fn zero() -> Self {
+        0.0f64
     }
 }
 
@@ -92,6 +110,20 @@ where
 {
     pub fn new(x: T, y: T) -> Self {
         Self { x, y }
+    }
+
+    pub fn unit_x() -> Self {
+        Self {
+            x: T::one(),
+            y: T::zero(),
+        }
+    }
+
+    pub fn unit_y() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::one(),
+        }
     }
 }
 
@@ -192,6 +224,39 @@ where
     }
 }
 
+impl<T> AddAssign for Vec2<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl<T> SubAssign for Vec2<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+    T: Copy,
+{
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl<T> MulAssign<T> for Vec2<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    fn mul_assign(&mut self, rhs: T) {
+        *self = *self * rhs
+    }
+}
+
 impl<T> From<[T; 2]> for Vec2<T>
 where
     T: Float,
@@ -263,6 +328,30 @@ where
 {
     pub fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
+    }
+
+    pub fn unit_x() -> Self {
+        Self {
+            x: T::one(),
+            y: T::zero(),
+            z: T::zero(),
+        }
+    }
+
+    pub fn unit_y() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::one(),
+            z: T::zero(),
+        }
+    }
+
+    pub fn unit_z() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::zero(),
+            z: T::one(),
+        }
     }
 }
 
@@ -368,6 +457,39 @@ where
     }
 }
 
+impl<T> AddAssign for Vec3<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl<T> SubAssign for Vec3<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+    T: Copy,
+{
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl<T> MulAssign<T> for Vec3<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    fn mul_assign(&mut self, rhs: T) {
+        *self = *self * rhs
+    }
+}
+
 impl<T> From<[T; 3]> for Vec3<T>
 where
     T: Float,
@@ -444,6 +566,42 @@ where
 {
     pub fn new(x: T, y: T, z: T, w: T) -> Self {
         Self { x, y, z, w }
+    }
+
+    pub fn unit_x() -> Self {
+        Self {
+            x: T::one(),
+            y: T::zero(),
+            z: T::zero(),
+            w: T::zero(),
+        }
+    }
+
+    pub fn unit_y() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::one(),
+            z: T::zero(),
+            w: T::zero(),
+        }
+    }
+
+    pub fn unit_z() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::zero(),
+            z: T::one(),
+            w: T::zero(),
+        }
+    }
+
+    pub fn unit_w() -> Self {
+        Self {
+            x: T::zero(),
+            y: T::zero(),
+            z: T::zero(),
+            w: T::one(),
+        }
     }
 }
 
@@ -551,6 +709,39 @@ where
             z: self.z * rhs,
             w: self.w * rhs,
         }
+    }
+}
+
+impl<T> AddAssign for Vec4<T>
+where
+    T: Float,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl<T> SubAssign for Vec4<T>
+where
+    T: Float,
+    T: Sub<Output = T>,
+    T: Copy,
+{
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl<T> MulAssign<T> for Vec4<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Copy,
+{
+    fn mul_assign(&mut self, rhs: T) {
+        *self = *self * rhs
     }
 }
 

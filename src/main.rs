@@ -5,11 +5,16 @@ use math::*;
 fn main() {
     println!("Hi.");
 
-    let vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    let mut vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
     let vec2 = Vec4::new(6.0, 7.0, 8.0, 9.0);
     let _res = vec1 + vec2;
     let _res = vec1.add(vec2);
     let _res = vector::add(vec1, vec2);
+    vec1 += vec2;
+    vec1 -= vec2;
+    vec1 *= 6.0;
+
+    println!("vec1: {:?}", vec1);
 
     let mat1 = Mat4::new(vec1, vec2, vec1, vec2);
     let mat2 = Mat4::new(vec2, vec1, vec2, vec1);
@@ -20,6 +25,9 @@ fn main() {
     let _res = matrix::scale(mat1, 5.0);
     let _res = mat1.scale(5.0);
     let res = mat1 * 5.0;
+    //let res = mat1 += mat1;
+
+    let _value = mat1.x.y;
 
     println!("mat4: {:?}", res);
 }
