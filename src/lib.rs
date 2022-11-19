@@ -97,6 +97,34 @@ mod tests {
         let to = Vec4::new(4.0, 1.0, 3.0, 3.0);
         let res = Vector::distance(from, to);
         assert_eq!(res, (3.0, 0.0, 1.0, 1.0).into());
+
+        //test dot
+        let vec1 = Vec2::new(1.0, 2.0);
+        let vec2 = Vec2::new(3.0, 4.0);
+        let res = Vector::dot(vec1, vec2);
+        assert_eq!(res, 11.0);
+        let vec1 = Vec3::new(1.0, 2.0, 3.0);
+        let vec2 = Vec3::new(3.0, 4.0, 5.0);
+        let res = Vector::dot(vec1, vec2);
+        assert_eq!(res, 26.0);
+        let vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+        let vec2 = Vec4::new(3.0, 4.0, 5.0, 6.0);
+        let res = Vector::dot(vec1, vec2);
+        assert_eq!(res, 50.0);
+
+        //test angle
+        let vec1 = Vec2::new(1.0, 0.0);
+        let vec2 = Vec2::new(0.0, 1.0);
+        let res = Vector::angle(vec1, vec2).in_deg();
+        assert!(f64::abs(res - 90.0) < 0.001);
+        let vec1 = Vec3::new(1.0, 0.0, 0.0);
+        let vec2 = Vec3::new(-3.0, 0.0, 0.0);
+        let res = Vector::angle(vec1, vec2).in_deg();
+        assert!(f64::abs(res - 180.0) < 0.001);
+        let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
+        let res = Vector::angle(vec1, vec2).in_deg();
+        assert!(f64::abs(res - 90.0) < 0.001);
     }
 
     #[test]
@@ -146,6 +174,18 @@ mod tests {
         let to = Vec2::new(1.0, 2.0);
         let vector = from.distance(to);
         assert_eq!(vector, (1.0, 2.0).into());
+
+        //test dot
+        let vec1 = Vec2::new(3.0, 4.0);
+        let vec2 = Vec2::new(5.0, 6.0);
+        let dot = vec1.dot(vec2);
+        assert_eq!(dot, 39.0);
+
+        //test angle
+        let vec1 = Vec2::new(1.0, 0.0);
+        let vec2 = Vec2::new(0.0, 1.0);
+        let res = vec1.angle(vec2).in_deg();
+        assert!(f64::abs(res - 90.0) < 0.001);
 
         //test negation
         let vector = Vec2::new(1.0, 2.0);
@@ -239,6 +279,18 @@ mod tests {
         let to = Vec3::new(1.0, -2.0, 1.0);
         let vector = from.distance(to);
         assert_eq!(vector, (1.0, -2.0, 1.0).into());
+
+        //test dot
+        let vec1 = Vec3::new(3.0, 4.0, 5.0);
+        let vec2 = Vec3::new(5.0, 6.0, 7.0);
+        let dot = vec1.dot(vec2);
+        assert_eq!(dot, 74.0);
+
+        //test angle
+        let vec1 = Vec3::new(1.0, 0.0, 0.0);
+        let vec2 = Vec3::new(-3.0, 0.0, 0.0);
+        let res = vec1.angle(vec2).in_deg();
+        assert!(f64::abs(res - 180.0) < 0.001);
 
         //test negation
         let vector = -Vec3::new(5.0, 4.0, 3.0);
@@ -336,6 +388,17 @@ mod tests {
         let to = Vec4::new(1.0, -2.0, 1.0, 4.4);
         let vector = from.distance(to);
         assert_eq!(vector, (1.0, -2.0, 1.0, 4.4).into());
+
+        //test dot
+        let vec1 = Vec4::new(3.0, 4.0, 5.0, 6.0);
+        let vec2 = Vec4::new(5.0, 6.0, 7.0, 8.0);
+        let dot = vec1.dot(vec2);
+        assert_eq!(dot, 122.0);
+
+        let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
+        let res = vec1.angle(vec2).in_deg();
+        assert!(f64::abs(res - 90.0) < 0.001);
 
         //test negation
         let vector = Vec4::new(5.0, 4.0, 3.0, 2.0);

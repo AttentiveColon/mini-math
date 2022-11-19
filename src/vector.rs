@@ -21,6 +21,8 @@ pub trait VectorOps {
     fn sq_magnitude(self) -> Self::Float;
     fn normalize(self) -> Self;
     fn distance(self, other: Self) -> Self;
+    fn dot(self, other: Self) -> Self::Float;
+    fn angle(self, other: Self) -> Self::Float;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +51,12 @@ pub mod Vector {
     }
     pub fn distance<T: VectorOps>(from: T, to: T) -> T {
         from.distance(to)
+    }
+    pub fn dot<T: VectorOps>(vector1: T, vector2: T) -> <T as VectorOps>::Float {
+        vector1.dot(vector2)
+    }
+    pub fn angle<T: VectorOps>(from: T, to: T) -> <T as VectorOps>::Float {
+        from.angle(to)
     }
 }
 
@@ -130,6 +138,14 @@ where
 
     fn distance(self, other: Self) -> Self {
         other - self
+    }
+
+    fn dot(self, other: Self) -> Self::Float {
+        (self.x * other.x) + (self.y * other.y)
+    }
+
+    fn angle(self, other: Self) -> Self::Float {
+        Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
     }
 }
 
@@ -326,6 +342,14 @@ where
 
     fn distance(self, other: Self) -> Self {
         other - self
+    }
+
+    fn dot(self, other: Self) -> Self::Float {
+        (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
+    }
+
+    fn angle(self, other: Self) -> Self::Float {
+        Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
     }
 }
 
@@ -540,6 +564,14 @@ where
 
     fn distance(self, other: Self) -> Self {
         other - self
+    }
+
+    fn dot(self, other: Self) -> Self::Float {
+        (self.x * other.x) + (self.y * other.y) + (self.z * other.z) + (self.w * other.w)
+    }
+
+    fn angle(self, other: Self) -> Self::Float {
+        Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
     }
 }
 
