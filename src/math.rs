@@ -52,10 +52,13 @@ pub trait VectorOps {
 
 pub trait MatrixOps {
     type Float;
+    type Vector;
 
     fn add(self, other: Self) -> Self;
     fn sub(self, other: Self) -> Self;
     fn scale(self, other: Self::Float) -> Self;
+    fn mult_mat(self, other: Self) -> Self;
+    fn mult_vec(self, other: Self::Vector) -> Self::Vector;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +94,12 @@ pub mod matrix {
     }
     pub fn scale<T: MatrixOps>(matrix1: T, scalar: T::Float) -> T {
         matrix1.scale(scalar)
+    }
+    pub fn mult_mat<T: MatrixOps>(matrix1: T, matrix2: T) -> T {
+        matrix1.mult_mat(matrix2)
+    }
+    pub fn mult_vec<T: MatrixOps>(matrix: T, vector: T::Vector) -> T::Vector {
+        matrix.mult_vec(vector)
     }
 }
 
@@ -836,6 +845,8 @@ where
     T: Copy,
 {
     type Float = T;
+    type Vector = Vec2<T>;
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -845,6 +856,14 @@ where
     }
 
     fn scale(self, other: T) -> Self {
+        self * other
+    }
+
+    fn mult_mat(self, other: Self) -> Self {
+        self * other
+    }
+
+    fn mult_vec(self, other: Self::Vector) -> Self::Vector {
         self * other
     }
 }
@@ -891,6 +910,46 @@ where
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
+        }
+    }
+}
+
+impl<T> Mul for Mat2<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Mat2<T>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: Vec2::new(
+                self.x.x * rhs.x.x + self.x.y * rhs.y.x,
+                self.x.x * rhs.x.y + self.x.y * rhs.y.y,
+            ),
+            y: Vec2::new(
+                self.y.x * rhs.x.x + self.y.y * rhs.y.x,
+                self.y.x * rhs.x.y + self.y.y * rhs.y.y,
+            ),
+        }
+    }
+}
+
+impl<T> Mul<Vec2<T>> for Mat2<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Vec2<T>;
+
+    fn mul(self, rhs: Vec2<T>) -> Self::Output {
+        Self::Output {
+            x: self.x.x * rhs.x + self.x.y * rhs.y,
+            y: self.y.x * rhs.x + self.y.y * rhs.y,
         }
     }
 }
@@ -953,6 +1012,8 @@ where
     T: Copy,
 {
     type Float = T;
+    type Vector = Vec3<T>;
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -962,6 +1023,14 @@ where
     }
 
     fn scale(self, other: T) -> Self {
+        self * other
+    }
+
+    fn mult_mat(self, other: Self) -> Self {
+        self * other
+    }
+
+    fn mult_vec(self, other: Self::Vector) -> Self::Vector {
         self * other
     }
 }
@@ -1011,6 +1080,54 @@ where
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+        }
+    }
+}
+
+impl<T> Mul for Mat3<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Mat3<T>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: Vec3::new(
+                self.x.x * rhs.x.x + self.x.y * rhs.y.x + self.x.z * rhs.z.x,
+                self.x.x * rhs.x.y + self.x.y * rhs.y.y + self.x.z * rhs.z.y,
+                self.x.x * rhs.x.z + self.x.y * rhs.y.z + self.x.z * rhs.z.z,
+            ),
+            y: Vec3::new(
+                self.y.x * rhs.x.x + self.y.y * rhs.y.x + self.y.z * rhs.z.x,
+                self.y.x * rhs.x.y + self.y.y * rhs.y.y + self.y.z * rhs.z.y,
+                self.y.x * rhs.x.z + self.y.y * rhs.y.z + self.y.z * rhs.z.z,
+            ),
+            z: Vec3::new(
+                self.z.x * rhs.x.x + self.z.y * rhs.y.x + self.z.z * rhs.z.x,
+                self.z.x * rhs.x.y + self.z.y * rhs.y.y + self.z.z * rhs.z.y,
+                self.z.x * rhs.x.z + self.z.y * rhs.y.z + self.z.z * rhs.z.z,
+            ),
+        }
+    }
+}
+
+impl<T> Mul<Vec3<T>> for Mat3<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Vec3<T>;
+
+    fn mul(self, rhs: Vec3<T>) -> Self::Output {
+        Self::Output {
+            x: self.x.x * rhs.x + self.x.y * rhs.y + self.x.z * rhs.z,
+            y: self.y.x * rhs.x + self.y.y * rhs.y + self.y.z * rhs.z,
+            z: self.z.x * rhs.x + self.z.y * rhs.y + self.z.z * rhs.z,
         }
     }
 }
@@ -1076,6 +1193,8 @@ where
     T: Copy,
 {
     type Float = T;
+    type Vector = Vec4<T>;
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -1085,6 +1204,14 @@ where
     }
 
     fn scale(self, other: T) -> Self {
+        self * other
+    }
+
+    fn mult_mat(self, other: Self) -> Self {
+        self * other
+    }
+
+    fn mult_vec(self, other: Vec4<T>) -> Self::Vector {
         self * other
     }
 }
@@ -1137,6 +1264,64 @@ where
             y: self.y * rhs,
             z: self.z * rhs,
             w: self.w * rhs,
+        }
+    }
+}
+
+impl<T> Mul for Mat4<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Mat4<T>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: Vec4::new(
+                self.x.x * rhs.x.x + self.x.y * rhs.y.x + self.x.z * rhs.z.x + self.x.w * rhs.w.x,
+                self.x.x * rhs.x.y + self.x.y * rhs.y.y + self.x.z * rhs.z.y + self.x.w * rhs.w.y,
+                self.x.x * rhs.x.z + self.x.y * rhs.y.z + self.x.z * rhs.z.z + self.x.w * rhs.w.z,
+                self.x.x * rhs.x.w + self.x.y * rhs.y.w + self.x.z * rhs.z.w + self.x.w * rhs.w.w,
+            ),
+            y: Vec4::new(
+                self.y.x * rhs.x.x + self.y.y * rhs.y.x + self.y.z * rhs.z.x + self.y.w * rhs.w.x,
+                self.y.x * rhs.x.y + self.y.y * rhs.y.y + self.y.z * rhs.z.y + self.y.w * rhs.w.y,
+                self.y.x * rhs.x.z + self.y.y * rhs.y.z + self.y.z * rhs.z.z + self.y.w * rhs.w.z,
+                self.y.x * rhs.x.w + self.y.y * rhs.y.w + self.y.z * rhs.z.w + self.y.w * rhs.w.w,
+            ),
+            z: Vec4::new(
+                self.z.x * rhs.x.x + self.z.y * rhs.y.x + self.z.z * rhs.z.x + self.z.w * rhs.w.x,
+                self.z.x * rhs.x.y + self.z.y * rhs.y.y + self.z.z * rhs.z.y + self.z.w * rhs.w.y,
+                self.z.x * rhs.x.z + self.z.y * rhs.y.z + self.z.z * rhs.z.z + self.z.w * rhs.w.z,
+                self.z.x * rhs.x.w + self.z.y * rhs.y.w + self.z.z * rhs.z.w + self.z.w * rhs.w.w,
+            ),
+            w: Vec4::new(
+                self.w.x * rhs.x.x + self.w.y * rhs.y.x + self.w.z * rhs.z.x + self.w.w * rhs.w.x,
+                self.w.x * rhs.x.y + self.w.y * rhs.y.y + self.w.z * rhs.z.y + self.w.w * rhs.w.y,
+                self.w.x * rhs.x.z + self.w.y * rhs.y.z + self.w.z * rhs.z.z + self.w.w * rhs.w.z,
+                self.w.x * rhs.x.w + self.w.y * rhs.y.w + self.w.z * rhs.z.w + self.w.w * rhs.w.w,
+            ),
+        }
+    }
+}
+
+impl<T> Mul<Vec4<T>> for Mat4<T>
+where
+    T: Float,
+    T: Mul<Output = T>,
+    T: Add<Output = T>,
+    T: Copy,
+{
+    type Output = Vec4<T>;
+
+    fn mul(self, rhs: Vec4<T>) -> Self::Output {
+        Self::Output {
+            x: self.x.x * rhs.x + self.x.y * rhs.y + self.x.z * rhs.z + self.x.w * rhs.w,
+            y: self.y.x * rhs.x + self.y.y * rhs.y + self.y.z * rhs.z + self.y.w * rhs.w,
+            z: self.z.x * rhs.x + self.z.y * rhs.y + self.z.z * rhs.z + self.z.w * rhs.w,
+            w: self.w.x * rhs.x + self.w.y * rhs.y + self.w.z * rhs.z + self.w.w * rhs.w,
         }
     }
 }

@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod math;
 use math::vector;
 use math::*;
@@ -5,31 +7,73 @@ use math::*;
 fn main() {
     println!("Hi.");
 
-    let mut vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
-    let vec2 = Vec4::new(6.0, 7.0, 8.0, 9.0);
-    let _res = vec1 + vec2;
-    let _res = vec1.add(vec2);
-    let _res = vector::add(vec1, vec2);
-    vec1 += vec2;
-    vec1 -= vec2;
-    vec1 *= 6.0;
+    // let mut vec1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    // let vec2 = Vec4::new(6.0, 7.0, 8.0, 9.0);
+    // let _res = vec1 + vec2;
+    // let _res = vec1.add(vec2);
+    // let _res = vector::add(vec1, vec2);
+    // vec1 += vec2;
+    // vec1 -= vec2;
+    // vec1 *= 6.0;
 
-    println!("vec1: {:?}", vec1);
+    // let a: Vec3<f64> = Vec3::unit_z();
 
-    let mat1 = Mat4::new(vec1, vec2, vec1, vec2);
-    let mat2 = Mat4::new(vec2, vec1, vec2, vec1);
-    let _res = mat1 + mat2;
-    let _res = mat1.add(mat2);
-    let _res = matrix::add(mat2, mat2);
+    // println!("vec1: {:?}", vec1);
 
-    let _res = matrix::scale(mat1, 5.0);
-    let _res = mat1.scale(5.0);
-    let res = mat1 * 5.0;
-    //let res = mat1 += mat1;
+    // let mat1 = Mat4::new(vec1, vec2, vec1, vec2);
+    // let mat2 = Mat4::new(vec2, vec1, vec2, vec1);
+    // let _res = mat1 + mat2;
+    // let _res = mat1.add(mat2);
+    // let _res = matrix::add(mat2, mat2);
 
-    let _value = mat1.x.y;
+    // let _res = matrix::scale(mat1, 5.0);
+    // let _res = mat1.scale(5.0);
+    // let res = mat1 * 5.0;
 
-    println!("mat4: {:?}", res);
+    // let _value = mat1.x.y;
+
+    // println!("mat4: {:?}", res);
+    // let vec1 = Vec2::new(2.0, 4.0);
+    // let vec2 = Vec2::new(2.0, 3.0);
+
+    // let mat1 = Mat2::new(vec1, vec2);
+
+    // let res = mat1.mult(mat1);
+
+    // println!("result: {:?}", res);
+
+    // let res = res * 5.0;
+    // let res = res.scale(0.5);
+
+    // println!("result: {:?}", res);
+
+    // let vec = Vec3::new(0.0, 1.0, 2.0);
+
+    // let mat3 = Mat3::new(vec, vec, vec);
+    // let res = mat3 * mat3;
+    // println!("result: {:?}", res);
+
+    // let vec4 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    // let mat4 = Mat4::new(vec4, vec4, vec4, vec4);
+    // let res = mat4.mult_mat(mat4);
+
+    // println!("result: {:?}", res);
+
+    // let res = mat4.mult_vec(vec4);
+
+    // println!("result: {:?}", res);
+
+    // let vec3 = Vec3::new(1.0, 2.0, 3.0);
+    // let mat3 = Mat3::new(vec3, vec3, vec3);
+    // let res = mat3.mult_vec(vec3);
+
+    // println!("result: {:?}", res);
+
+    let vec2 = Vec2::new(1.0, 2.0);
+    let mat2 = Mat2::new(vec2, vec2);
+    let res = mat2.mult_vec(vec2);
+
+    println!("result: {:?}", res);
 }
 
 #[test]
