@@ -56,6 +56,14 @@ mod tests {
         let res = Vector::magnitude(vec4);
         assert!(f64::abs(res - 5.477225575051661) < f64::EPSILON);
 
+        //test square magnitude
+        let res = Vector::sq_magnitude(vec2);
+        assert_eq!(res, 5.0);
+        let res = Vector::sq_magnitude(vec3);
+        assert_eq!(res, 14.0);
+        let res = Vector::sq_magnitude(vec4);
+        assert_eq!(res, 30.0);
+
         //test normalize
         let res = Vector::normalize(vec2);
         assert_eq!(res, (0.4472135954999579, 0.8944271909999159).into());
@@ -75,6 +83,20 @@ mod tests {
             )
                 .into()
         );
+
+        //test distance
+        let from = Vec2::new(1.0, 1.0);
+        let to = Vec2::zeroed();
+        let res = Vector::distance(from, to);
+        assert_eq!(res, (-1.0, -1.0).into());
+        let from = Vec3::zeroed();
+        let to = Vec3::new(4.0, 1.0, 2.0);
+        let res = Vector::distance(from, to);
+        assert_eq!(res, (4.0, 1.0, 2.0).into());
+        let from = Vec4::new(1.0, 1.0, 2.0, 2.0);
+        let to = Vec4::new(4.0, 1.0, 3.0, 3.0);
+        let res = Vector::distance(from, to);
+        assert_eq!(res, (3.0, 0.0, 1.0, 1.0).into());
     }
 
     #[test]
@@ -91,7 +113,11 @@ mod tests {
         let vector = Vec2::unit_y();
         assert_eq!(vector, (0.0, 1.0).into());
 
+        //test zeroed
+        assert_eq!(Vec2::zeroed(), (0.0, 0.0).into());
+
         //test add
+        let vector = Vec2::new(0.0, 1.0);
         let vector = vector.add((5.0, 4.0).into());
         assert_eq!(vector, (5.0, 5.0).into());
 
@@ -105,12 +131,21 @@ mod tests {
 
         //test magnitude
         let mag = vector.magnitude();
-        println!("mag: {}", mag);
         assert!(f32::abs(mag - 70.71068) < f32::EPSILON);
+
+        //test sq_magnitude
+        let sq_mag = vector.sq_magnitude();
+        assert_eq!(sq_mag, 5000.0);
 
         //test normalize
         let vector = vector.normalize();
         assert_eq!(vector, (0.7071067811865475, 0.7071067811865475).into());
+
+        //test distance
+        let from = Vec2::zeroed();
+        let to = Vec2::new(1.0, 2.0);
+        let vector = from.distance(to);
+        assert_eq!(vector, (1.0, 2.0).into());
 
         //test negation
         let vector = Vec2::new(1.0, 2.0);
@@ -170,6 +205,9 @@ mod tests {
         let vector = Vec3::unit_z();
         assert_eq!(vector, (0.0, 0.0, 1.0).into());
 
+        //test zeroed
+        assert_eq!(Vec3::zeroed(), (0.0, 0.0, 0.0).into());
+
         //test add
         let vector = Vec3::new(0.0, 0.0, 0.0);
         let vector = vector.add((5.0, 4.0, 3.0).into());
@@ -188,9 +226,19 @@ mod tests {
         let mag = vector.magnitude();
         assert!(f32::abs(mag - 35.35534) < f32::EPSILON);
 
+        //test sq_magnitude
+        let sq_mag = vector.sq_magnitude();
+        assert_eq!(sq_mag, 1250.0);
+
         //test normalize
         let vector = vector.normalize();
         assert_eq!(vector, (0.70710677, 0.56568545, 0.42426407).into());
+
+        //test distance
+        let from = Vec3::zeroed();
+        let to = Vec3::new(1.0, -2.0, 1.0);
+        let vector = from.distance(to);
+        assert_eq!(vector, (1.0, -2.0, 1.0).into());
 
         //test negation
         let vector = -Vec3::new(5.0, 4.0, 3.0);
@@ -253,6 +301,9 @@ mod tests {
         let vector = Vec4::unit_w();
         assert_eq!(vector, (0.0, 0.0, 0.0, 1.0).into());
 
+        //test zeroed
+        assert_eq!(Vec4::zeroed(), (0.0, 0.0, 0.0, 0.0).into());
+
         //test add
         let vector = Vec4::new(0.0, 0.0, 0.0, 0.0);
         let vector = vector.add((5.0, 4.0, 3.0, 2.0).into());
@@ -272,9 +323,19 @@ mod tests {
         println!("{}", mag);
         assert!(f32::abs(mag - 36.742348) < f32::EPSILON);
 
+        //test sq_magnitude
+        let sq_mag = vector.sq_magnitude();
+        assert_eq!(sq_mag, 1350.0);
+
         //test normalize
         let vector = vector.normalize();
         assert_eq!(vector, (0.6804138, 0.544331, 0.40824828, 0.2721655).into());
+
+        //test distance
+        let from = Vec4::zeroed();
+        let to = Vec4::new(1.0, -2.0, 1.0, 4.4);
+        let vector = from.distance(to);
+        assert_eq!(vector, (1.0, -2.0, 1.0, 4.4).into());
 
         //test negation
         let vector = Vec4::new(5.0, 4.0, 3.0, 2.0);

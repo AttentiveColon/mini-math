@@ -1,7 +1,10 @@
 #![allow(non_snake_case)]
 
 use super::base::Float;
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::{
+    fmt::Display,
+    ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign},
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Traits
@@ -10,11 +13,14 @@ use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 pub trait VectorOps {
     type Float;
 
+    fn zeroed() -> Self;
     fn add(self, other: Self) -> Self;
     fn sub(self, other: Self) -> Self;
     fn scale(self, other: Self::Float) -> Self;
     fn magnitude(self) -> Self::Float;
+    fn sq_magnitude(self) -> Self::Float;
     fn normalize(self) -> Self;
+    fn distance(self, other: Self) -> Self;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,8 +41,14 @@ pub mod Vector {
     pub fn magnitude<T: VectorOps>(vector: T) -> <T as VectorOps>::Float {
         vector.magnitude()
     }
+    pub fn sq_magnitude<T: VectorOps>(vector: T) -> <T as VectorOps>::Float {
+        vector.sq_magnitude()
+    }
     pub fn normalize<T: VectorOps>(vector: T) -> T {
         vector.normalize()
+    }
+    pub fn distance<T: VectorOps>(from: T, to: T) -> T {
+        from.distance(to)
     }
 }
 
@@ -84,6 +96,10 @@ where
 {
     type Float = T;
 
+    fn zeroed() -> Self {
+        Vec2::new(T::zero(), T::zero())
+    }
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -100,12 +116,20 @@ where
         Float::sqrt((self.x * self.x) + (self.y * self.y))
     }
 
+    fn sq_magnitude(self) -> Self::Float {
+        (self.x * self.x) + (self.y * self.y)
+    }
+
     fn normalize(self) -> Self {
         let mag = self.magnitude();
         Self {
             x: self.x / mag,
             y: self.y / mag,
         }
+    }
+
+    fn distance(self, other: Self) -> Self {
+        other - self
     }
 }
 
@@ -203,6 +227,15 @@ where
     }
 }
 
+impl<T> Display for Vec2<T>
+where
+    T: Float,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "vec2({}, {})", self.x, self.y)
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Vec3
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,6 +291,10 @@ where
 {
     type Float = T;
 
+    fn zeroed() -> Self {
+        Vec3::new(T::zero(), T::zero(), T::zero())
+    }
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -274,6 +311,10 @@ where
         Float::sqrt((self.x * self.x) + (self.y * self.y) + (self.z * self.z))
     }
 
+    fn sq_magnitude(self) -> Self::Float {
+        (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
+    }
+
     fn normalize(self) -> Self {
         let mag = self.magnitude();
         Self {
@@ -281,6 +322,10 @@ where
             y: self.y / mag,
             z: self.z / mag,
         }
+    }
+
+    fn distance(self, other: Self) -> Self {
+        other - self
     }
 }
 
@@ -382,6 +427,15 @@ where
     }
 }
 
+impl<T> Display for Vec3<T>
+where
+    T: Float,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "vec3({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Vec4
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -450,6 +504,10 @@ where
 {
     type Float = T;
 
+    fn zeroed() -> Self {
+        Vec4::new(T::zero(), T::zero(), T::zero(), T::zero())
+    }
+
     fn add(self, other: Self) -> Self {
         self + other
     }
@@ -466,6 +524,10 @@ where
         Float::sqrt((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w))
     }
 
+    fn sq_magnitude(self) -> Self::Float {
+        (self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)
+    }
+
     fn normalize(self) -> Self {
         let mag = self.magnitude();
         Self {
@@ -474,6 +536,10 @@ where
             z: self.z / mag,
             w: self.w / mag,
         }
+    }
+
+    fn distance(self, other: Self) -> Self {
+        other - self
     }
 }
 
@@ -576,6 +642,15 @@ where
 {
     fn mul_assign(&mut self, rhs: T) {
         *self = *self * rhs
+    }
+}
+
+impl<T> Display for Vec4<T>
+where
+    T: Float,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "vec4({}, {}, {}, {})", self.x, self.y, self.z, self.w)
     }
 }
 
