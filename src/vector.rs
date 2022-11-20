@@ -1,5 +1,3 @@
-#![allow(non_snake_case)]
-
 use super::base::Float;
 use std::{
     fmt::Display,
@@ -33,6 +31,7 @@ pub trait VectorOps {
 // Statics
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[allow(non_snake_case)]
 pub mod Vector {
     use super::VectorOps;
     pub fn add<T: VectorOps>(vector1: T, vector2: T) -> T {

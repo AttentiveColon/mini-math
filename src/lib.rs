@@ -14,6 +14,7 @@ pub use vector::{Vec2, Vec3, Vec4, Vector, VectorOps};
 // Tests
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[rustfmt::skip]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,21 +69,9 @@ mod tests {
         let res = Vector::normalize(vec2);
         assert_eq!(res, (0.4472135954999579, 0.8944271909999159).into());
         let res = Vector::normalize(vec3);
-        assert_eq!(
-            res,
-            (0.2672612419124244, 0.5345224838248488, 0.8017837257372732).into()
-        );
+        assert_eq!(res, (0.2672612419124244, 0.5345224838248488, 0.8017837257372732).into());
         let res = Vector::normalize(vec4);
-        assert_eq!(
-            res,
-            (
-                0.18257418583505536,
-                0.3651483716701107,
-                0.5477225575051661,
-                0.7302967433402214
-            )
-                .into()
-        );
+        assert_eq!(res,(0.18257418583505536, 0.3651483716701107, 0.5477225575051661, 0.7302967433402214).into());
 
         //test distance
         let from = Vec2::new(1.0, 1.0);
@@ -144,44 +133,26 @@ mod tests {
         let vec1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(4.0, 4.0, 4.0, 4.0);
         assert_eq!(Vector::lerp(vec1, vec2, 0.0), vec1);
-        assert_eq!(
-            Vector::lerp(vec1, vec2, 0.25),
-            Vec4::new(1.0, 1.0, 1.0, 1.0)
-        );
-        assert_eq!(
-            Vector::lerp(vec1, vec2, 0.50),
-            Vec4::new(2.0, 2.0, 2.0, 2.0)
-        );
-        assert_eq!(
-            Vector::lerp(vec1, vec2, 0.75),
-            Vec4::new(3.0, 3.0, 3.0, 3.0)
-        );
+        assert_eq!(Vector::lerp(vec1, vec2, 0.25), Vec4::new(1.0, 1.0, 1.0, 1.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.50), Vec4::new(2.0, 2.0, 2.0, 2.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.75), Vec4::new(3.0, 3.0, 3.0, 3.0));
         assert_eq!(Vector::lerp(vec1, vec2, 1.0), vec2);
 
         //test nlerp
         let vec1 = Vec2::new(-200.0, 0.0);
         let vec2 = Vec2::new(0.0, 200.0);
         assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
-        assert_eq!(
-            Vector::nlerp(vec1, vec2, 0.5),
-            (-0.7071067811865475, 0.7071067811865475).into()
-        );
+        assert_eq!( Vector::nlerp(vec1, vec2, 0.5), (-0.7071067811865475, 0.7071067811865475).into());
         assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
         let vec1 = Vec3::new(-200.0, 0.0, 0.0);
         let vec2 = Vec3::new(0.0, 200.0, 0.0);
         assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
-        assert_eq!(
-            Vector::nlerp(vec1, vec2, 0.5),
-            (-0.7071067811865475, 0.7071067811865475, 0.0).into()
-        );
+        assert_eq!(Vector::nlerp(vec1, vec2, 0.5),(-0.7071067811865475, 0.7071067811865475, 0.0).into());
         assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
         let vec1 = Vec4::new(-200.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 200.0, 0.0, 0.0);
         assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
-        assert_eq!(
-            Vector::nlerp(vec1, vec2, 0.5),
-            (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into()
-        );
+        assert_eq!(Vector::nlerp(vec1, vec2, 0.5),(-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into());
         assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
 
         //test slerp
@@ -202,13 +173,9 @@ mod tests {
         let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
         assert!(Vector::slerp(vec1, vec2, 0.0).approx_eq(vec1, f32::EPSILON));
-        assert!(Vector::slerp(vec1, vec2, 0.25)
-            .approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
-        assert!(
-            Vector::slerp(vec1, vec2, 0.5).approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001)
-        );
-        assert!(Vector::slerp(vec1, vec2, 0.75)
-            .approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.25).approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.5).approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.75).approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
         assert!(Vector::slerp(vec1, vec2, 1.0).approx_eq(vec2, f32::EPSILON));
     }
 
@@ -285,9 +252,7 @@ mod tests {
         let vec1 = Vec2::new(-200.0, 0.0);
         let vec2 = Vec2::new(0.0, 200.0);
         assert_eq!(vec1.nlerp(vec2, 0.0), vec1.normalize());
-        assert_eq!(
-            vec1.nlerp(vec2, 0.5),
-            (-0.7071067811865475, 0.7071067811865475).into()
+        assert_eq!(vec1.nlerp(vec2, 0.5), (-0.7071067811865475, 0.7071067811865475).into()
         );
         assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
 
@@ -295,15 +260,9 @@ mod tests {
         let vec1 = Vec2::new(1.0, 0.0);
         let vec2 = Vec2::new(0.0, 1.0);
         assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
-        assert!(vec1
-            .slerp(vec2, 0.25)
-            .approx_eq(Vec2::new(0.92387, 0.38268), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.5)
-            .approx_eq(Vec2::new(0.70710, 0.70710), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.75)
-            .approx_eq(Vec2::new(0.38268, 0.92387), 0.0001));
+        assert!(vec1.slerp(vec2, 0.25).approx_eq(Vec2::new(0.92387, 0.38268), 0.0001));
+        assert!(vec1.slerp(vec2, 0.5).approx_eq(Vec2::new(0.70710, 0.70710), 0.0001));
+        assert!(vec1.slerp(vec2, 0.75).approx_eq(Vec2::new(0.38268, 0.92387), 0.0001));
         assert!(vec1.slerp(vec2, 1.0).approx_eq(vec2, f32::EPSILON));
 
         //test negation
@@ -434,15 +393,9 @@ mod tests {
         let vec1 = Vec3::new(1.0, 0.0, 0.0);
         let vec2 = Vec3::new(0.0, 1.0, 0.0);
         assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
-        assert!(vec1
-            .slerp(vec2, 0.25)
-            .approx_eq(Vec3::new(0.92387, 0.38268, 0.0), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.5)
-            .approx_eq(Vec3::new(0.70710, 0.70710, 0.0), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.75)
-            .approx_eq(Vec3::new(0.38268, 0.92387, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.25).approx_eq(Vec3::new(0.92387, 0.38268, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.5).approx_eq(Vec3::new(0.70710, 0.70710, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.75).approx_eq(Vec3::new(0.38268, 0.92387, 0.0), 0.0001));
 
         //test negation
         let vector = -Vec3::new(5.0, 4.0, 3.0);
@@ -566,25 +519,16 @@ mod tests {
         let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
         assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
-        assert!(vec1
-            .slerp(vec2, 0.25)
-            .approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.5)
-            .approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001));
-        assert!(vec1
-            .slerp(vec2, 0.75)
-            .approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.25).approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.5).approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 0.75).approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
         assert!(vec1.slerp(vec2, 1.0).approx_eq(vec2, f32::EPSILON));
 
         //test nlerp
         let vec1 = Vec4::new(-200.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 200.0, 0.0, 0.0);
         assert_eq!(vec1.nlerp(vec2, 0.0), vec1.normalize());
-        assert_eq!(
-            vec1.nlerp(vec2, 0.5),
-            (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into()
-        );
+        assert_eq!(vec1.nlerp(vec2, 0.5), (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into());
         assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
 
         //test negation
@@ -700,10 +644,7 @@ mod tests {
             z: (7.0, 8.0, 9.0).into(),
         };
 
-        assert_eq!(
-            m3,
-            [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]].into()
-        );
+        assert_eq!(m3,[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]].into());
         assert_eq!(m3, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0].into());
     }
 
@@ -716,19 +657,7 @@ mod tests {
             w: (1.0, 2.0, 3.0, 4.0).into(),
         };
 
-        assert_eq!(
-            m4,
-            [
-                [1.0, 2.0, 3.0, 4.0],
-                [1.0, 2.0, 3.0, 4.0],
-                [1.0, 2.0, 3.0, 4.0],
-                [1.0, 2.0, 3.0, 4.0]
-            ]
-            .into()
-        );
-        assert_eq!(
-            m4,
-            [1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0].into()
-        );
+        assert_eq!(m4, [[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]].into());
+        assert_eq!(m4, [1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0].into());
     }
 }

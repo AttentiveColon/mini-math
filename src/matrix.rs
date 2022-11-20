@@ -1,5 +1,3 @@
-#![allow(non_snake_case)]
-
 use super::base::Float;
 use super::vector::{Vec2, Vec3, Vec4};
 use std::ops::{Add, Mul, Sub};
@@ -23,6 +21,7 @@ pub trait MatrixOps {
 // Statics
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[allow(non_snake_case)]
 pub mod Matrix {
     use super::MatrixOps;
     pub fn add<T: MatrixOps>(matrix1: T, matrix2: T) -> T {
