@@ -115,15 +115,15 @@ mod tests {
         //test angle
         let vec1 = Vec2::new(1.0, 0.0);
         let vec2 = Vec2::new(0.0, 1.0);
-        let res = Vector::angle(vec1, vec2).in_deg();
+        let res = Vector::angle(vec1, vec2).to_degrees();
         assert!(f64::abs(res - 90.0) < 0.001);
         let vec1 = Vec3::new(1.0, 0.0, 0.0);
         let vec2 = Vec3::new(-3.0, 0.0, 0.0);
-        let res = Vector::angle(vec1, vec2).in_deg();
+        let res = Vector::angle(vec1, vec2).to_degrees();
         assert!(f64::abs(res - 180.0) < 0.001);
         let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
-        let res = Vector::angle(vec1, vec2).in_deg();
+        let res = Vector::angle(vec1, vec2).to_degrees();
         assert!(f64::abs(res - 90.0) < 0.001);
 
         //test lerp
@@ -183,6 +183,33 @@ mod tests {
             (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into()
         );
         assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
+
+        //test slerp
+        let vec1 = Vec2::new(1.0, 0.0);
+        let vec2 = Vec2::new(0.0, 1.0);
+        assert!(Vector::slerp(vec1, vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(Vector::slerp(vec1, vec2, 0.25).approx_eq(Vec2::new(0.92387, 0.38268), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.5).approx_eq(Vec2::new(0.70710, 0.70710), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.75).approx_eq(Vec2::new(0.38268, 0.92387), 0.0001));
+        assert!(vec1.slerp(vec2, 1.0).approx_eq(vec2, f32::EPSILON));
+        let vec1 = Vec3::new(1.0, 0.0, 0.0);
+        let vec2 = Vec3::new(0.0, 1.0, 0.0);
+        assert!(Vector::slerp(vec1, vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(Vector::slerp(vec1, vec2, 0.25).approx_eq(Vec3::new(0.92387, 0.38268, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.5).approx_eq(Vec3::new(0.70710, 0.70710, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 0.75).approx_eq(Vec3::new(0.38268, 0.92387, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 1.0).approx_eq(vec2, f32::EPSILON));
+        let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        assert!(Vector::slerp(vec1, vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(Vector::slerp(vec1, vec2, 0.25)
+            .approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
+        assert!(
+            Vector::slerp(vec1, vec2, 0.5).approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001)
+        );
+        assert!(Vector::slerp(vec1, vec2, 0.75)
+            .approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
+        assert!(Vector::slerp(vec1, vec2, 1.0).approx_eq(vec2, f32::EPSILON));
     }
 
     #[test]
@@ -242,7 +269,7 @@ mod tests {
         //test angle
         let vec1 = Vec2::new(1.0, 0.0);
         let vec2 = Vec2::new(0.0, 1.0);
-        let res = vec1.angle(vec2).in_deg();
+        let res = vec1.angle(vec2).to_degrees();
         assert!(f64::abs(res - 90.0) < 0.001);
 
         //test lerp
@@ -263,6 +290,21 @@ mod tests {
             (-0.7071067811865475, 0.7071067811865475).into()
         );
         assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
+
+        //test slerp
+        let vec1 = Vec2::new(1.0, 0.0);
+        let vec2 = Vec2::new(0.0, 1.0);
+        assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(vec1
+            .slerp(vec2, 0.25)
+            .approx_eq(Vec2::new(0.92387, 0.38268), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.5)
+            .approx_eq(Vec2::new(0.70710, 0.70710), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.75)
+            .approx_eq(Vec2::new(0.38268, 0.92387), 0.0001));
+        assert!(vec1.slerp(vec2, 1.0).approx_eq(vec2, f32::EPSILON));
 
         //test negation
         let vector = Vec2::new(1.0, 2.0);
@@ -366,7 +408,7 @@ mod tests {
         //test angle
         let vec1 = Vec3::new(1.0, 0.0, 0.0);
         let vec2 = Vec3::new(-3.0, 0.0, 0.0);
-        let res = vec1.angle(vec2).in_deg();
+        let res = vec1.angle(vec2).to_degrees();
         assert!(f64::abs(res - 180.0) < 0.001);
 
         //test lerp
@@ -387,6 +429,20 @@ mod tests {
             (-0.7071067811865475, 0.7071067811865475, 0.0).into()
         );
         assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
+
+        //test slerp
+        let vec1 = Vec3::new(1.0, 0.0, 0.0);
+        let vec2 = Vec3::new(0.0, 1.0, 0.0);
+        assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(vec1
+            .slerp(vec2, 0.25)
+            .approx_eq(Vec3::new(0.92387, 0.38268, 0.0), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.5)
+            .approx_eq(Vec3::new(0.70710, 0.70710, 0.0), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.75)
+            .approx_eq(Vec3::new(0.38268, 0.92387, 0.0), 0.0001));
 
         //test negation
         let vector = -Vec3::new(5.0, 4.0, 3.0);
@@ -494,7 +550,7 @@ mod tests {
         //test angle
         let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
-        let res = vec1.angle(vec2).in_deg();
+        let res = vec1.angle(vec2).to_degrees();
         assert!(f64::abs(res - 90.0) < 0.001);
 
         //test lerp
@@ -505,6 +561,21 @@ mod tests {
         assert_eq!(vec1.lerp(vec2, 0.50), Vec4::new(2.0, 2.0, 2.0, 2.0));
         assert_eq!(vec1.lerp(vec2, 0.75), Vec4::new(3.0, 3.0, 3.0, 3.0));
         assert_eq!(vec1.lerp(vec2, 1.0), vec2);
+
+        //test slerp
+        let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 1.0, 0.0, 0.0);
+        assert!(vec1.slerp(vec2, 0.0).approx_eq(vec1, f32::EPSILON));
+        assert!(vec1
+            .slerp(vec2, 0.25)
+            .approx_eq(Vec4::new(0.92387, 0.38268, 0.0, 0.0), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.5)
+            .approx_eq(Vec4::new(0.70710, 0.70710, 0.0, 0.0), 0.0001));
+        assert!(vec1
+            .slerp(vec2, 0.75)
+            .approx_eq(Vec4::new(0.38268, 0.92387, 0.0, 0.0), 0.0001));
+        assert!(vec1.slerp(vec2, 1.0).approx_eq(vec2, f32::EPSILON));
 
         //test nlerp
         let vec1 = Vec4::new(-200.0, 0.0, 0.0, 0.0);

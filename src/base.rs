@@ -14,13 +14,19 @@ pub trait Float: Display {
     fn sqrt(self) -> Self;
     fn sin(self) -> Self;
     fn cos(self) -> Self;
+    fn sin_cos(self) -> (Self, Self)
+    where
+        Self: Sized;
     fn acos(self) -> Self;
     fn one() -> Self;
     fn zero() -> Self;
     fn neg_one() -> Self;
 
-    fn in_deg(self) -> Self;
+    fn to_degrees(self) -> Self;
+    fn to_radians(self) -> Self;
     fn clamp(self, min: Self, max: Self) -> Self;
+
+    fn aprox_eq(self, other: Self, within: Self) -> bool;
 }
 
 impl Float for f32 {
@@ -34,6 +40,10 @@ impl Float for f32 {
 
     fn cos(self) -> Self {
         f32::cos(self)
+    }
+
+    fn sin_cos(self) -> (Self, Self) {
+        f32::sin_cos(self)
     }
 
     fn acos(self) -> Self {
@@ -52,12 +62,20 @@ impl Float for f32 {
         -1.0f32
     }
 
-    fn in_deg(self) -> Self {
-        self * RADIAN as f32
+    fn to_degrees(self) -> Self {
+        f32::to_degrees(self)
+    }
+
+    fn to_radians(self) -> Self {
+        f32::to_radians(self)
     }
 
     fn clamp(self, min: Self, max: Self) -> Self {
         f32::clamp(self, min, max)
+    }
+
+    fn aprox_eq(self, other: Self, within: Self) -> bool {
+        (self - other) <= within
     }
 }
 
@@ -72,6 +90,10 @@ impl Float for f64 {
 
     fn cos(self) -> Self {
         f64::cos(self)
+    }
+
+    fn sin_cos(self) -> (Self, Self) {
+        f64::sin_cos(self)
     }
 
     fn acos(self) -> Self {
@@ -90,11 +112,19 @@ impl Float for f64 {
         -1.0f64
     }
 
-    fn in_deg(self) -> Self {
-        self * RADIAN
+    fn to_degrees(self) -> Self {
+        f64::to_degrees(self)
+    }
+
+    fn to_radians(self) -> Self {
+        f64::to_radians(self)
     }
 
     fn clamp(self, min: Self, max: Self) -> Self {
         f64::clamp(self, min, max)
+    }
+
+    fn aprox_eq(self, other: Self, within: Self) -> bool {
+        (self - other) <= within
     }
 }

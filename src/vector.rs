@@ -25,6 +25,8 @@ pub trait VectorOps {
     fn angle(self, other: Self) -> Self::Float;
     fn lerp(self, other: Self, frac: Self::Float) -> Self;
     fn nlerp(self, other: Self, frac: Self::Float) -> Self;
+    fn slerp(self, other: Self, frac: Self::Float) -> Self;
+    fn approx_eq(self, other: Self, within: Self::Float) -> bool;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +67,12 @@ pub mod Vector {
     }
     pub fn nlerp<T: VectorOps>(from: T, to: T, frac: <T as VectorOps>::Float) -> T {
         from.nlerp(to, frac)
+    }
+    pub fn slerp<T: VectorOps>(from: T, to: T, frac: <T as VectorOps>::Float) -> T {
+        from.slerp(to, frac)
+    }
+    pub fn approx_eq<T: VectorOps>(vector1: T, other: T, within: <T as VectorOps>::Float) -> bool {
+        vector1.approx_eq(other, within)
     }
 }
 
@@ -162,6 +170,23 @@ where
 
     fn nlerp(self, other: Self, frac: Self::Float) -> Self {
         self.lerp(other, frac).normalize()
+    }
+
+    fn slerp(self, other: Self, frac: Self::Float) -> Self {
+        let dot = self.dot(other);
+        let dot = dot.clamp(Float::neg_one(), Float::one());
+
+        let theta = dot.acos();
+        let theta = theta * frac;
+
+        let relative = (other - (self * dot)).normalize();
+        let (sin, cos) = theta.sin_cos();
+
+        (self * cos) + (relative * sin)
+    }
+
+    fn approx_eq(self, other: Self, within: Self::Float) -> bool {
+        Float::aprox_eq(self.x, other.x, within) && Float::aprox_eq(self.y, other.y, within)
     }
 }
 
@@ -374,6 +399,25 @@ where
 
     fn nlerp(self, other: Self, frac: Self::Float) -> Self {
         self.lerp(other, frac).normalize()
+    }
+
+    fn slerp(self, other: Self, frac: Self::Float) -> Self {
+        let dot = self.dot(other);
+        let dot = dot.clamp(Float::neg_one(), Float::one());
+
+        let theta = dot.acos();
+        let theta = theta * frac;
+
+        let relative = (other - (self * dot)).normalize();
+        let (sin, cos) = theta.sin_cos();
+
+        (self * cos) + (relative * sin)
+    }
+
+    fn approx_eq(self, other: Self, within: Self::Float) -> bool {
+        Float::aprox_eq(self.x, other.x, within)
+            && Float::aprox_eq(self.y, other.y, within)
+            && Float::aprox_eq(self.z, other.z, within)
     }
 }
 
@@ -604,6 +648,26 @@ where
 
     fn nlerp(self, other: Self, frac: Self::Float) -> Self {
         self.lerp(other, frac).normalize()
+    }
+
+    fn slerp(self, other: Self, frac: Self::Float) -> Self {
+        let dot = self.dot(other);
+        let dot = dot.clamp(Float::neg_one(), Float::one());
+
+        let theta = dot.acos();
+        let theta = theta * frac;
+
+        let relative = (other - (self * dot)).normalize();
+        let (sin, cos) = theta.sin_cos();
+
+        (self * cos) + (relative * sin)
+    }
+
+    fn approx_eq(self, other: Self, within: Self::Float) -> bool {
+        Float::aprox_eq(self.x, other.x, within)
+            && Float::aprox_eq(self.y, other.y, within)
+            && Float::aprox_eq(self.z, other.z, within)
+            && Float::aprox_eq(self.w, other.w, within)
     }
 }
 
