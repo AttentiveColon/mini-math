@@ -23,6 +23,8 @@ pub trait VectorOps {
     fn distance(self, other: Self) -> Self;
     fn dot(self, other: Self) -> Self::Float;
     fn angle(self, other: Self) -> Self::Float;
+    fn lerp(self, other: Self, frac: Self::Float) -> Self;
+    fn nlerp(self, other: Self, frac: Self::Float) -> Self;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +59,12 @@ pub mod Vector {
     }
     pub fn angle<T: VectorOps>(from: T, to: T) -> <T as VectorOps>::Float {
         from.angle(to)
+    }
+    pub fn lerp<T: VectorOps>(from: T, to: T, frac: <T as VectorOps>::Float) -> T {
+        from.lerp(to, frac)
+    }
+    pub fn nlerp<T: VectorOps>(from: T, to: T, frac: <T as VectorOps>::Float) -> T {
+        from.nlerp(to, frac)
     }
 }
 
@@ -146,6 +154,14 @@ where
 
     fn angle(self, other: Self) -> Self::Float {
         Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
+    }
+
+    fn lerp(self, other: Self, frac: Self::Float) -> Self {
+        self + self.distance(other) * frac
+    }
+
+    fn nlerp(self, other: Self, frac: Self::Float) -> Self {
+        self.lerp(other, frac).normalize()
     }
 }
 
@@ -350,6 +366,14 @@ where
 
     fn angle(self, other: Self) -> Self::Float {
         Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
+    }
+
+    fn lerp(self, other: Self, frac: Self::Float) -> Self {
+        self + self.distance(other) * frac
+    }
+
+    fn nlerp(self, other: Self, frac: Self::Float) -> Self {
+        self.lerp(other, frac).normalize()
     }
 }
 
@@ -572,6 +596,14 @@ where
 
     fn angle(self, other: Self) -> Self::Float {
         Float::acos(self.dot(other) / (self.magnitude() * other.magnitude()))
+    }
+
+    fn lerp(self, other: Self, frac: Self::Float) -> Self {
+        self + self.distance(other) * frac
+    }
+
+    fn nlerp(self, other: Self, frac: Self::Float) -> Self {
+        self.lerp(other, frac).normalize()
     }
 }
 

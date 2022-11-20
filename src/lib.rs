@@ -125,6 +125,64 @@ mod tests {
         let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
         let res = Vector::angle(vec1, vec2).in_deg();
         assert!(f64::abs(res - 90.0) < 0.001);
+
+        //test lerp
+        let vec1 = Vec2::new(0.0, 0.0);
+        let vec2 = Vec2::new(4.0, 4.0);
+        assert_eq!(Vector::lerp(vec1, vec2, 0.0), vec1);
+        assert_eq!(Vector::lerp(vec1, vec2, 0.25), Vec2::new(1.0, 1.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.50), Vec2::new(2.0, 2.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.75), Vec2::new(3.0, 3.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 1.0), vec2);
+        let vec1 = Vec3::new(0.0, 0.0, 0.0);
+        let vec2 = Vec3::new(4.0, 4.0, 4.0);
+        assert_eq!(Vector::lerp(vec1, vec2, 0.0), vec1);
+        assert_eq!(Vector::lerp(vec1, vec2, 0.25), Vec3::new(1.0, 1.0, 1.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.50), Vec3::new(2.0, 2.0, 2.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 0.75), Vec3::new(3.0, 3.0, 3.0));
+        assert_eq!(Vector::lerp(vec1, vec2, 1.0), vec2);
+        let vec1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(4.0, 4.0, 4.0, 4.0);
+        assert_eq!(Vector::lerp(vec1, vec2, 0.0), vec1);
+        assert_eq!(
+            Vector::lerp(vec1, vec2, 0.25),
+            Vec4::new(1.0, 1.0, 1.0, 1.0)
+        );
+        assert_eq!(
+            Vector::lerp(vec1, vec2, 0.50),
+            Vec4::new(2.0, 2.0, 2.0, 2.0)
+        );
+        assert_eq!(
+            Vector::lerp(vec1, vec2, 0.75),
+            Vec4::new(3.0, 3.0, 3.0, 3.0)
+        );
+        assert_eq!(Vector::lerp(vec1, vec2, 1.0), vec2);
+
+        //test nlerp
+        let vec1 = Vec2::new(-200.0, 0.0);
+        let vec2 = Vec2::new(0.0, 200.0);
+        assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            Vector::nlerp(vec1, vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475).into()
+        );
+        assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
+        let vec1 = Vec3::new(-200.0, 0.0, 0.0);
+        let vec2 = Vec3::new(0.0, 200.0, 0.0);
+        assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            Vector::nlerp(vec1, vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475, 0.0).into()
+        );
+        assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
+        let vec1 = Vec4::new(-200.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 200.0, 0.0, 0.0);
+        assert_eq!(Vector::nlerp(vec1, vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            Vector::nlerp(vec1, vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into()
+        );
+        assert_eq!(Vector::nlerp(vec1, vec2, 1.0), vec2.normalize());
     }
 
     #[test]
@@ -186,6 +244,25 @@ mod tests {
         let vec2 = Vec2::new(0.0, 1.0);
         let res = vec1.angle(vec2).in_deg();
         assert!(f64::abs(res - 90.0) < 0.001);
+
+        //test lerp
+        let vec1 = Vec2::new(0.0, 0.0);
+        let vec2 = Vec2::new(4.0, 4.0);
+        assert_eq!(vec1.lerp(vec2, 0.0), vec1);
+        assert_eq!(vec1.lerp(vec2, 0.25), Vec2::new(1.0, 1.0));
+        assert_eq!(vec1.lerp(vec2, 0.50), Vec2::new(2.0, 2.0));
+        assert_eq!(vec1.lerp(vec2, 0.75), Vec2::new(3.0, 3.0));
+        assert_eq!(vec1.lerp(vec2, 1.0), vec2);
+
+        //test nlerp
+        let vec1 = Vec2::new(-200.0, 0.0);
+        let vec2 = Vec2::new(0.0, 200.0);
+        assert_eq!(vec1.nlerp(vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            vec1.nlerp(vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475).into()
+        );
+        assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
 
         //test negation
         let vector = Vec2::new(1.0, 2.0);
@@ -292,6 +369,25 @@ mod tests {
         let res = vec1.angle(vec2).in_deg();
         assert!(f64::abs(res - 180.0) < 0.001);
 
+        //test lerp
+        let vec1 = Vec3::new(0.0, 0.0, 0.0);
+        let vec2 = Vec3::new(4.0, 4.0, 4.0);
+        assert_eq!(vec1.lerp(vec2, 0.0), vec1);
+        assert_eq!(vec1.lerp(vec2, 0.25), Vec3::new(1.0, 1.0, 1.0));
+        assert_eq!(vec1.lerp(vec2, 0.50), Vec3::new(2.0, 2.0, 2.0));
+        assert_eq!(vec1.lerp(vec2, 0.75), Vec3::new(3.0, 3.0, 3.0));
+        assert_eq!(vec1.lerp(vec2, 1.0), vec2);
+
+        //test nlerp
+        let vec1 = Vec3::new(-200.0, 0.0, 0.0);
+        let vec2 = Vec3::new(0.0, 200.0, 0.0);
+        assert_eq!(vec1.nlerp(vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            vec1.nlerp(vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475, 0.0).into()
+        );
+        assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
+
         //test negation
         let vector = -Vec3::new(5.0, 4.0, 3.0);
         assert_eq!(vector, (-5.0, -4.0, -3.0).into());
@@ -395,10 +491,30 @@ mod tests {
         let dot = vec1.dot(vec2);
         assert_eq!(dot, 122.0);
 
+        //test angle
         let vec1 = Vec4::new(1.0, 0.0, 0.0, 0.0);
         let vec2 = Vec4::new(0.0, 4.0, 0.0, 0.0);
         let res = vec1.angle(vec2).in_deg();
         assert!(f64::abs(res - 90.0) < 0.001);
+
+        //test lerp
+        let vec1 = Vec4::new(0.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(4.0, 4.0, 4.0, 4.0);
+        assert_eq!(vec1.lerp(vec2, 0.0), vec1);
+        assert_eq!(vec1.lerp(vec2, 0.25), Vec4::new(1.0, 1.0, 1.0, 1.0));
+        assert_eq!(vec1.lerp(vec2, 0.50), Vec4::new(2.0, 2.0, 2.0, 2.0));
+        assert_eq!(vec1.lerp(vec2, 0.75), Vec4::new(3.0, 3.0, 3.0, 3.0));
+        assert_eq!(vec1.lerp(vec2, 1.0), vec2);
+
+        //test nlerp
+        let vec1 = Vec4::new(-200.0, 0.0, 0.0, 0.0);
+        let vec2 = Vec4::new(0.0, 200.0, 0.0, 0.0);
+        assert_eq!(vec1.nlerp(vec2, 0.0), vec1.normalize());
+        assert_eq!(
+            vec1.nlerp(vec2, 0.5),
+            (-0.7071067811865475, 0.7071067811865475, 0.0, 0.0).into()
+        );
+        assert_eq!(vec1.nlerp(vec2, 1.0), vec2.normalize());
 
         //test negation
         let vector = Vec4::new(5.0, 4.0, 3.0, 2.0);
