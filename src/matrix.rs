@@ -10,11 +10,36 @@ pub trait MatrixOps {
     type Float;
     type Vector;
 
+    fn zeroed() -> Self;
+    fn identity() -> Self;
+    fn get_element(&self, index: usize) -> Self::Float;
+    fn get_column(&self, col: Column) -> Self::Vector;
+    fn get_row(&self, row: Row) -> Self::Vector;
+    fn get_position(&self) -> Self::Vector;
+
     fn add(self, other: Self) -> Self;
     fn sub(self, other: Self) -> Self;
     fn scale(self, other: Self::Float) -> Self;
     fn mult_mat(self, other: Self) -> Self;
     fn mult_vec(self, other: Self::Vector) -> Self::Vector;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Enums
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+pub enum Column {
+    X,
+    Y,
+    Z,
+    W,
+}
+
+pub enum Row {
+    X,
+    Y,
+    Z,
+    W,
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,19 +70,30 @@ pub mod Matrix {
 // Mat2
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[rustfmt::skip]
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, PartialOrd)]
 pub struct Mat2<T: Float> {
-    pub x: Vec2<T>,
-    pub y: Vec2<T>,
+    pub m00: T, pub m01: T,
+    pub m10: T, pub m11: T,
 }
 
 impl<T> Mat2<T>
 where
     T: Float,
     T: Default,
+    T: Copy,
 {
-    pub fn new(x: Vec2<T>, y: Vec2<T>) -> Self {
-        Mat2 { x, y }
+    pub fn new(m00: T, m01: T, m10: T, m11: T) -> Self {
+        Self { m00, m01, m10, m11 }
+    }
+
+    pub fn from_cols(col1: Vec2<T>, col2: Vec2<T>) -> Self {
+        Self {
+            m00: col1.x,
+            m01: col2.x,
+            m10: col1.y,
+            m11: col2.y,
+        }
     }
 }
 
@@ -71,6 +107,38 @@ where
 {
     type Float = T;
     type Vector = Vec2<T>;
+
+    fn zeroed() -> Self {
+        [T::zero(), T::zero(), T::zero(), T::zero()].into()
+    }
+
+    fn identity() -> Self {
+        [T::one(), T::zero(), T::zero(), T::one()].into()
+    }
+
+    fn get_element(&self, index: usize) -> Self::Float {
+        self.as_ref()[index]
+    }
+
+    fn get_column(&self, col: Column) -> Self::Vector {
+        match col {
+            Column::X => Vec2::new(self.m00, self.m10),
+            Column::Y => Vec2::new(self.m01, self.m11),
+            _ => panic!("outside bounds of mat2"),
+        }
+    }
+
+    fn get_row(&self, row: Row) -> Self::Vector {
+        match row {
+            Row::X => Vec2::new(self.m00, self.m01),
+            Row::Y => Vec2::new(self.m10, self.m11),
+            _ => panic!("outside bounds of mat2"),
+        }
+    }
+
+    fn get_position(&self) -> Self::Vector {
+        unimplemented!()
+    }
 
     fn add(self, other: Self) -> Self {
         self + other
@@ -102,8 +170,10 @@ where
 
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
+            m00: self.m00 + rhs.m00,
+            m01: self.m01 + rhs.m01,
+            m10: self.m10 + rhs.m10,
+            m11: self.m11 + rhs.m11,
         }
     }
 }
@@ -117,8 +187,10 @@ where
 
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
+            m00: self.m00 - rhs.m00,
+            m01: self.m01 - rhs.m01,
+            m10: self.m10 - rhs.m10,
+            m11: self.m11 - rhs.m11,
         }
     }
 }
@@ -133,8 +205,10 @@ where
 
     fn mul(self, rhs: T) -> Self::Output {
         Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
+            m00: self.m00 * rhs,
+            m01: self.m01 * rhs,
+            m10: self.m10 * rhs,
+            m11: self.m11 * rhs,
         }
     }
 }
@@ -150,14 +224,10 @@ where
 
     fn mul(self, rhs: Self) -> Self::Output {
         Self {
-            x: Vec2::new(
-                self.x.x * rhs.x.x + self.x.y * rhs.y.x,
-                self.x.x * rhs.x.y + self.x.y * rhs.y.y,
-            ),
-            y: Vec2::new(
-                self.y.x * rhs.x.x + self.y.y * rhs.y.x,
-                self.y.x * rhs.x.y + self.y.y * rhs.y.y,
-            ),
+            m00: self.m00 * rhs.m00 + self.m01 * rhs.m10,
+            m01: self.m00 * rhs.m01 + self.m01 * rhs.m11,
+            m10: self.m10 * rhs.m00 + self.m11 * rhs.m10,
+            m11: self.m10 * rhs.m01 + self.m11 * rhs.m11,
         }
     }
 }
@@ -173,9 +243,18 @@ where
 
     fn mul(self, rhs: Vec2<T>) -> Self::Output {
         Self::Output {
-            x: self.x.x * rhs.x + self.x.y * rhs.y,
-            y: self.y.x * rhs.x + self.y.y * rhs.y,
+            x: self.m00 * rhs.x + self.m01 * rhs.y,
+            y: self.m10 * rhs.x + self.m11 * rhs.y,
         }
+    }
+}
+
+impl<T> AsRef<[T; 4]> for Mat2<T>
+where
+    T: Float,
+{
+    fn as_ref(&self) -> &[T; 4] {
+        unsafe { std::mem::transmute(self) }
     }
 }
 
@@ -183,11 +262,12 @@ where
 // Mat3
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[rustfmt::skip]
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, PartialOrd)]
 pub struct Mat3<T: Float> {
-    pub x: Vec3<T>,
-    pub y: Vec3<T>,
-    pub z: Vec3<T>,
+    pub m00: T, pub m01: T, pub m02: T,
+    pub m10: T, pub m11: T, pub m12: T,
+    pub m20: T, pub m21: T, pub m22: T,
 }
 
 impl<T> Mat3<T>
@@ -195,8 +275,33 @@ where
     T: Float,
     T: Default,
 {
-    pub fn new(x: Vec3<T>, y: Vec3<T>, z: Vec3<T>) -> Self {
-        Mat3 { x, y, z }
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(m00: T, m01: T, m02: T, m10: T, m11: T, m12: T, m20: T, m21: T, m22: T) -> Self {
+        Self {
+            m00,
+            m01,
+            m02,
+            m10,
+            m11,
+            m12,
+            m20,
+            m21,
+            m22,
+        }
+    }
+
+    pub fn from_cols(x: Vec3<T>, y: Vec3<T>, z: Vec3<T>) -> Self {
+        Self {
+            m00: x.x,
+            m01: y.x,
+            m02: z.x,
+            m10: x.y,
+            m11: y.y,
+            m12: z.y,
+            m20: x.z,
+            m21: y.z,
+            m22: z.z,
+        }
     }
 }
 
@@ -210,6 +315,62 @@ where
 {
     type Float = T;
     type Vector = Vec3<T>;
+
+    fn zeroed() -> Self {
+        [
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+        ]
+        .into()
+    }
+
+    fn identity() -> Self {
+        [
+            T::one(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::one(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::one(),
+        ]
+        .into()
+    }
+
+    fn get_element(&self, index: usize) -> Self::Float {
+        self.as_ref()[index]
+    }
+
+    fn get_column(&self, col: Column) -> Self::Vector {
+        match col {
+            Column::X => Vec3::new(self.m00, self.m10, self.m20),
+            Column::Y => Vec3::new(self.m01, self.m11, self.m21),
+            Column::Z => Vec3::new(self.m02, self.m12, self.m22),
+            _ => panic!("outside bounds of mat3"),
+        }
+    }
+
+    fn get_row(&self, row: Row) -> Self::Vector {
+        match row {
+            Row::X => Vec3::new(self.m00, self.m01, self.m02),
+            Row::Y => Vec3::new(self.m10, self.m11, self.m12),
+            Row::Z => Vec3::new(self.m20, self.m21, self.m22),
+            _ => panic!("outside bounds of mat3"),
+        }
+    }
+
+    fn get_position(&self) -> Self::Vector {
+        unimplemented!()
+    }
 
     fn add(self, other: Self) -> Self {
         self + other
@@ -241,9 +402,15 @@ where
 
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
+            m00: self.m00 + rhs.m00,
+            m01: self.m01 + rhs.m01,
+            m02: self.m02 + rhs.m02,
+            m10: self.m10 + rhs.m10,
+            m11: self.m11 + rhs.m11,
+            m12: self.m12 + rhs.m12,
+            m20: self.m20 + rhs.m20,
+            m21: self.m21 + rhs.m21,
+            m22: self.m22 + rhs.m22,
         }
     }
 }
@@ -257,9 +424,15 @@ where
 
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-            z: self.z - rhs.z,
+            m00: self.m00 - rhs.m00,
+            m01: self.m01 - rhs.m01,
+            m02: self.m02 - rhs.m02,
+            m10: self.m10 - rhs.m10,
+            m11: self.m11 - rhs.m11,
+            m12: self.m12 - rhs.m12,
+            m20: self.m20 - rhs.m20,
+            m21: self.m21 - rhs.m21,
+            m22: self.m22 - rhs.m22,
         }
     }
 }
@@ -274,9 +447,15 @@ where
 
     fn mul(self, rhs: T) -> Self::Output {
         Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-            z: self.z * rhs,
+            m00: self.m00 * rhs,
+            m01: self.m01 * rhs,
+            m02: self.m02 * rhs,
+            m10: self.m10 * rhs,
+            m11: self.m11 * rhs,
+            m12: self.m12 * rhs,
+            m20: self.m20 * rhs,
+            m21: self.m21 * rhs,
+            m22: self.m22 * rhs,
         }
     }
 }
@@ -292,21 +471,17 @@ where
 
     fn mul(self, rhs: Self) -> Self::Output {
         Self {
-            x: Vec3::new(
-                self.x.x * rhs.x.x + self.x.y * rhs.y.x + self.x.z * rhs.z.x,
-                self.x.x * rhs.x.y + self.x.y * rhs.y.y + self.x.z * rhs.z.y,
-                self.x.x * rhs.x.z + self.x.y * rhs.y.z + self.x.z * rhs.z.z,
-            ),
-            y: Vec3::new(
-                self.y.x * rhs.x.x + self.y.y * rhs.y.x + self.y.z * rhs.z.x,
-                self.y.x * rhs.x.y + self.y.y * rhs.y.y + self.y.z * rhs.z.y,
-                self.y.x * rhs.x.z + self.y.y * rhs.y.z + self.y.z * rhs.z.z,
-            ),
-            z: Vec3::new(
-                self.z.x * rhs.x.x + self.z.y * rhs.y.x + self.z.z * rhs.z.x,
-                self.z.x * rhs.x.y + self.z.y * rhs.y.y + self.z.z * rhs.z.y,
-                self.z.x * rhs.x.z + self.z.y * rhs.y.z + self.z.z * rhs.z.z,
-            ),
+            m00: self.m00 * rhs.m00 + self.m01 * rhs.m10 + self.m02 * rhs.m20,
+            m01: self.m00 * rhs.m01 + self.m01 * rhs.m11 + self.m02 * rhs.m21,
+            m02: self.m00 * rhs.m02 + self.m01 * rhs.m12 + self.m02 * rhs.m22,
+
+            m10: self.m10 * rhs.m00 + self.m11 * rhs.m10 + self.m12 * rhs.m20,
+            m11: self.m10 * rhs.m01 + self.m11 * rhs.m11 + self.m12 * rhs.m21,
+            m12: self.m10 * rhs.m02 + self.m11 * rhs.m12 + self.m12 * rhs.m22,
+
+            m20: self.m20 * rhs.m00 + self.m21 * rhs.m10 + self.m22 * rhs.m20,
+            m21: self.m20 * rhs.m01 + self.m21 * rhs.m11 + self.m22 * rhs.m21,
+            m22: self.m20 * rhs.m02 + self.m21 * rhs.m12 + self.m22 * rhs.m22,
         }
     }
 }
@@ -322,10 +497,19 @@ where
 
     fn mul(self, rhs: Vec3<T>) -> Self::Output {
         Self::Output {
-            x: self.x.x * rhs.x + self.x.y * rhs.y + self.x.z * rhs.z,
-            y: self.y.x * rhs.x + self.y.y * rhs.y + self.y.z * rhs.z,
-            z: self.z.x * rhs.x + self.z.y * rhs.y + self.z.z * rhs.z,
+            x: self.m00 * rhs.x + self.m01 * rhs.y + self.m02 * rhs.z,
+            y: self.m10 * rhs.x + self.m11 * rhs.y + self.m12 * rhs.z,
+            z: self.m20 * rhs.x + self.m21 * rhs.y + self.m22 * rhs.z,
         }
+    }
+}
+
+impl<T> AsRef<[T; 9]> for Mat3<T>
+where
+    T: Float,
+{
+    fn as_ref(&self) -> &[T; 9] {
+        unsafe { std::mem::transmute(self) }
     }
 }
 
@@ -361,6 +545,30 @@ where
 {
     type Float = T;
     type Vector = Vec4<T>;
+
+    fn zeroed() -> Self {
+        todo!()
+    }
+
+    fn identity() -> Self {
+        todo!()
+    }
+
+    fn get_element(&self, _index: usize) -> Self::Float {
+        todo!()
+    }
+
+    fn get_column(&self, _col: Column) -> Self::Vector {
+        todo!()
+    }
+
+    fn get_row(&self, _row: Row) -> Self::Vector {
+        todo!()
+    }
+
+    fn get_position(&self) -> Self::Vector {
+        todo!()
+    }
 
     fn add(self, other: Self) -> Self {
         self + other
@@ -505,8 +713,10 @@ where
 {
     fn from(value: [[T; 2]; 2]) -> Self {
         Mat2 {
-            x: (value[0][0], value[0][1]).into(),
-            y: (value[1][0], value[1][1]).into(),
+            m00: value[0][0],
+            m01: value[0][1],
+            m10: value[1][0],
+            m11: value[1][1],
         }
     }
 }
@@ -519,8 +729,10 @@ where
 {
     fn from(value: [T; 4]) -> Self {
         Mat2 {
-            x: (value[0], value[1]).into(),
-            y: (value[2], value[3]).into(),
+            m00: value[0],
+            m01: value[1],
+            m10: value[2],
+            m11: value[3],
         }
     }
 }
@@ -537,9 +749,15 @@ where
 {
     fn from(value: [[T; 3]; 3]) -> Self {
         Mat3 {
-            x: (value[0][0], value[0][1], value[0][2]).into(),
-            y: (value[1][0], value[1][1], value[1][2]).into(),
-            z: (value[2][0], value[2][1], value[2][2]).into(),
+            m00: value[0][0],
+            m01: value[0][1],
+            m02: value[0][2],
+            m10: value[1][0],
+            m11: value[1][1],
+            m12: value[1][2],
+            m20: value[2][0],
+            m21: value[2][1],
+            m22: value[2][2],
         }
     }
 }
@@ -552,9 +770,15 @@ where
 {
     fn from(value: [T; 9]) -> Self {
         Mat3 {
-            x: (value[0], value[1], value[2]).into(),
-            y: (value[3], value[4], value[5]).into(),
-            z: (value[6], value[7], value[8]).into(),
+            m00: value[0],
+            m01: value[1],
+            m02: value[2],
+            m10: value[3],
+            m11: value[4],
+            m12: value[5],
+            m20: value[6],
+            m21: value[7],
+            m22: value[8],
         }
     }
 }

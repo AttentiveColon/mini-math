@@ -10,7 +10,7 @@ pub const RADIAN: f64 = 57.2957795131;
 // Traits
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-pub trait Float: Display {
+pub trait Float: Display + Copy {
     fn sqrt(self) -> Self;
     fn sin(self) -> Self;
     fn cos(self) -> Self;

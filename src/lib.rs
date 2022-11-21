@@ -572,6 +572,131 @@ mod tests {
     }
 
     #[test]
+    fn test_mat_2() {
+        //test new
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        assert_eq!(mat, [1.0, 2.0, 3.0, 4.0].into());
+
+        //test from_cols
+        let v1 = Vec2::new(1.0, 3.0);
+        let v2 = Vec2::new(2.0, 4.0);
+        let mat = Mat2::from_cols(v1, v2);
+        assert_eq!(mat, [1.0, 2.0, 3.0, 4.0].into());
+
+        //test zeroed
+        let zero = Mat2::zeroed();
+        assert_eq!(zero, [0.0, 0.0, 0.0, 0.0].into());
+
+        //test identity
+        let ident = Mat2::identity();
+        assert_eq!(ident, [1.0, 0.0, 0.0, 1.0].into());
+
+        //test get_element
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let elem = mat.get_element(2);
+        assert_eq!(elem, 3.0);
+
+        //test get_column
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let column = mat.get_column(matrix::Column::Y);
+        assert_eq!(column, Vec2::new(2.0, 4.0));
+
+        //test get_row
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let row = mat.get_row(matrix::Row::X);
+        assert_eq!(row, Vec2::new(1.0, 2.0));
+
+        //test add
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let res = mat + mat;
+        assert_eq!(res, Mat2::new(2.0, 4.0, 6.0, 8.0));
+
+        //test sub
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let res = mat - mat;
+        assert_eq!(res, Mat2::zeroed());
+
+        //test scale
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let res = mat * 2.0;
+        assert_eq!(res, Mat2::new(2.0, 4.0, 6.0, 8.0));
+
+        //test mult_mat
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let res = mat * mat;
+        assert_eq!(res, Mat2::new(7.0, 10.0, 15.0, 22.0));
+
+        //test mult_vec
+        let mat = Mat2::new(1.0, 2.0, 3.0, 4.0);
+        let vec = Vec2::new(1.0, 2.0);
+        let res = mat * vec;
+        assert_eq!(res, Vec2::new(5.0, 11.0));
+    }
+
+    #[test]
+    fn test_mat_3() {
+        //test new
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        assert_eq!(mat, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0].into());
+
+        //test from_cols
+        let v1 = Vec3::new(1.0, 4.0, 7.0);
+        let v2 = Vec3::new(2.0, 5.0, 8.0);
+        let v3 = Vec3::new(3.0, 6.0, 9.0);
+        let mat = Mat3::from_cols(v1, v2, v3);
+        assert_eq!(mat, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0].into());
+
+        //test zeroed
+        let zero = Mat3::zeroed();
+        assert_eq!(zero, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0].into());
+
+        //test identity
+        let ident = Mat3::identity();
+        assert_eq!(ident, [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0].into());
+
+        //test get_element
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let elem = mat.get_element(7);
+        assert_eq!(elem, 8.0);
+
+        //test get_column
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let column = mat.get_column(matrix::Column::Z);
+        assert_eq!(column, Vec3::new(3.0, 6.0, 9.0));
+
+        //test get_row
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let row = mat.get_row(matrix::Row::Z);
+        assert_eq!(row, Vec3::new(7.0, 8.0, 9.0));
+
+        //test add
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let res = mat + mat;
+        assert_eq!(res, Mat3::new(2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0));
+
+        //test sub
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let res = mat - mat;
+        assert_eq!(res, Mat3::zeroed());
+
+        //test scale
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let res = mat * 2.0;
+        assert_eq!(res, Mat3::new(2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0));
+
+        //test mult_mat
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let res = mat * mat;
+        assert_eq!(res, Mat3::new(30.0, 36.0, 42.0, 66.0, 81.0, 96.0, 102.0, 126.0, 150.0));
+
+        //test mult_vec
+        let mat = Mat3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let vec = Vec3::new(1.0, 2.0, 3.0);
+        let res = mat * vec;
+        assert_eq!(res, Vec3::new(14.0, 32.0, 50.0));
+    }
+
+    #[test]
     fn test_vec_2_conversions() {
         let v1 = [1.0, 2.0];
         let v2 = (1.0, 2.0);
@@ -628,8 +753,12 @@ mod tests {
     #[test]
     fn test_mat_2_conversions() {
         let m2 = Mat2 {
-            x: (2.0, 3.0).into(),
-            y: (4.0, 5.0).into(),
+            m00: 2.0,
+            m01: 3.0,
+            m10: 4.0,
+            m11: 5.0,
+            // x: (2.0, 3.0).into(),
+            // y: (4.0, 5.0).into(),
         };
 
         assert_eq!(m2, [[2.0, 3.0], [4.0, 5.0]].into());
@@ -639,9 +768,19 @@ mod tests {
     #[test]
     fn test_mat_3_conversions() {
         let m3 = Mat3 {
-            x: (1.0, 2.0, 3.0).into(),
-            y: (4.0, 5.0, 6.0).into(),
-            z: (7.0, 8.0, 9.0).into(),
+            m00: 1.0,
+            m01: 2.0,
+            m02: 3.0,
+            m10: 4.0,
+            m11: 5.0,
+            m12: 6.0,
+            m20: 7.0,
+            m21: 8.0,
+            m22: 9.0,
+
+            // x: (1.0, 2.0, 3.0).into(),
+            // y: (4.0, 5.0, 6.0).into(),
+            // z: (7.0, 8.0, 9.0).into(),
         };
 
         assert_eq!(m3,[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]].into());
