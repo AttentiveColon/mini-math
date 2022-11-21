@@ -517,12 +517,13 @@ where
 // Mat4
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+#[rustfmt::skip]
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, PartialOrd)]
 pub struct Mat4<T: Float> {
-    pub x: Vec4<T>,
-    pub y: Vec4<T>,
-    pub z: Vec4<T>,
-    pub w: Vec4<T>,
+    pub m00: T, pub m01: T, pub m02: T, pub m03: T,
+    pub m10: T, pub m11: T, pub m12: T, pub m13: T,
+    pub m20: T, pub m21: T, pub m22: T, pub m23: T,
+    pub m30: T, pub m31: T, pub m32: T, pub m33: T,
 }
 
 impl<T> Mat4<T>
@@ -530,8 +531,41 @@ where
     T: Float,
     T: Default,
 {
-    pub fn new(x: Vec4<T>, y: Vec4<T>, z: Vec4<T>, w: Vec4<T>) -> Self {
-        Mat4 { x, y, z, w }
+    #[rustfmt::skip]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        m00: T, m01: T, m02: T, m03: T,
+        m10: T, m11: T, m12: T, m13: T,
+        m20: T, m21: T, m22: T, m23: T,
+        m30: T, m31: T, m32: T, m33: T,
+    ) -> Self {
+        Mat4 {
+            m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23,
+            m30, m31, m32, m33,
+        }
+    }
+
+    pub fn from_cols(x: Vec4<T>, y: Vec4<T>, z: Vec4<T>, w: Vec4<T>) -> Self {
+        Mat4 {
+            m00: x.x,
+            m01: y.x,
+            m02: z.x,
+            m03: w.x,
+            m10: x.y,
+            m11: y.y,
+            m12: z.y,
+            m13: w.y,
+            m20: x.z,
+            m21: y.z,
+            m22: z.z,
+            m23: w.z,
+            m30: x.w,
+            m31: y.w,
+            m32: z.w,
+            m33: w.w,
+        }
     }
 }
 
@@ -547,27 +581,73 @@ where
     type Vector = Vec4<T>;
 
     fn zeroed() -> Self {
-        todo!()
+        [
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+        ]
+        .into()
     }
 
     fn identity() -> Self {
-        todo!()
+        [
+            T::one(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::one(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::one(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::zero(),
+            T::one(),
+        ]
+        .into()
     }
 
-    fn get_element(&self, _index: usize) -> Self::Float {
-        todo!()
+    fn get_element(&self, index: usize) -> Self::Float {
+        self.as_ref()[index]
     }
 
-    fn get_column(&self, _col: Column) -> Self::Vector {
-        todo!()
+    fn get_column(&self, col: Column) -> Self::Vector {
+        match col {
+            Column::X => Vec4::new(self.m00, self.m10, self.m20, self.m30),
+            Column::Y => Vec4::new(self.m01, self.m11, self.m21, self.m31),
+            Column::Z => Vec4::new(self.m02, self.m12, self.m22, self.m23),
+            Column::W => Vec4::new(self.m03, self.m13, self.m23, self.m33),
+        }
     }
 
-    fn get_row(&self, _row: Row) -> Self::Vector {
-        todo!()
+    fn get_row(&self, row: Row) -> Self::Vector {
+        match row {
+            Row::X => Vec4::new(self.m00, self.m01, self.m02, self.m03),
+            Row::Y => Vec4::new(self.m10, self.m11, self.m12, self.m13),
+            Row::Z => Vec4::new(self.m20, self.m21, self.m22, self.m23),
+            Row::W => Vec4::new(self.m30, self.m31, self.m32, self.m33),
+        }
     }
 
     fn get_position(&self) -> Self::Vector {
-        todo!()
+        self.get_column(Column::W)
     }
 
     fn add(self, other: Self) -> Self {
@@ -600,10 +680,22 @@ where
 
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-            w: self.w + rhs.w,
+            m00: self.m00 + rhs.m00,
+            m01: self.m01 + rhs.m01,
+            m02: self.m02 + rhs.m02,
+            m03: self.m03 + rhs.m03,
+            m10: self.m10 + rhs.m10,
+            m11: self.m11 + rhs.m11,
+            m12: self.m12 + rhs.m12,
+            m13: self.m13 + rhs.m13,
+            m20: self.m20 + rhs.m20,
+            m21: self.m21 + rhs.m21,
+            m22: self.m22 + rhs.m22,
+            m23: self.m23 + rhs.m23,
+            m30: self.m30 + rhs.m30,
+            m31: self.m31 + rhs.m31,
+            m32: self.m32 + rhs.m32,
+            m33: self.m33 + rhs.m33,
         }
     }
 }
@@ -617,10 +709,22 @@ where
 
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-            z: self.z - rhs.z,
-            w: self.w - rhs.w,
+            m00: self.m00 - rhs.m00,
+            m01: self.m01 - rhs.m01,
+            m02: self.m02 - rhs.m02,
+            m03: self.m03 - rhs.m03,
+            m10: self.m10 - rhs.m10,
+            m11: self.m11 - rhs.m11,
+            m12: self.m12 - rhs.m12,
+            m13: self.m13 - rhs.m13,
+            m20: self.m20 - rhs.m20,
+            m21: self.m21 - rhs.m21,
+            m22: self.m22 - rhs.m22,
+            m23: self.m23 - rhs.m23,
+            m30: self.m30 - rhs.m30,
+            m31: self.m31 - rhs.m31,
+            m32: self.m32 - rhs.m32,
+            m33: self.m33 - rhs.m33,
         }
     }
 }
@@ -635,10 +739,22 @@ where
 
     fn mul(self, rhs: T) -> Self::Output {
         Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-            z: self.z * rhs,
-            w: self.w * rhs,
+            m00: self.m00 * rhs,
+            m01: self.m01 * rhs,
+            m02: self.m02 * rhs,
+            m03: self.m03 * rhs,
+            m10: self.m10 * rhs,
+            m11: self.m11 * rhs,
+            m12: self.m12 * rhs,
+            m13: self.m13 * rhs,
+            m20: self.m20 * rhs,
+            m21: self.m21 * rhs,
+            m22: self.m22 * rhs,
+            m23: self.m23 * rhs,
+            m30: self.m30 * rhs,
+            m31: self.m31 * rhs,
+            m32: self.m32 * rhs,
+            m33: self.m33 * rhs,
         }
     }
 }
@@ -654,30 +770,22 @@ where
 
     fn mul(self, rhs: Self) -> Self::Output {
         Self {
-            x: Vec4::new(
-                self.x.x * rhs.x.x + self.x.y * rhs.y.x + self.x.z * rhs.z.x + self.x.w * rhs.w.x,
-                self.x.x * rhs.x.y + self.x.y * rhs.y.y + self.x.z * rhs.z.y + self.x.w * rhs.w.y,
-                self.x.x * rhs.x.z + self.x.y * rhs.y.z + self.x.z * rhs.z.z + self.x.w * rhs.w.z,
-                self.x.x * rhs.x.w + self.x.y * rhs.y.w + self.x.z * rhs.z.w + self.x.w * rhs.w.w,
-            ),
-            y: Vec4::new(
-                self.y.x * rhs.x.x + self.y.y * rhs.y.x + self.y.z * rhs.z.x + self.y.w * rhs.w.x,
-                self.y.x * rhs.x.y + self.y.y * rhs.y.y + self.y.z * rhs.z.y + self.y.w * rhs.w.y,
-                self.y.x * rhs.x.z + self.y.y * rhs.y.z + self.y.z * rhs.z.z + self.y.w * rhs.w.z,
-                self.y.x * rhs.x.w + self.y.y * rhs.y.w + self.y.z * rhs.z.w + self.y.w * rhs.w.w,
-            ),
-            z: Vec4::new(
-                self.z.x * rhs.x.x + self.z.y * rhs.y.x + self.z.z * rhs.z.x + self.z.w * rhs.w.x,
-                self.z.x * rhs.x.y + self.z.y * rhs.y.y + self.z.z * rhs.z.y + self.z.w * rhs.w.y,
-                self.z.x * rhs.x.z + self.z.y * rhs.y.z + self.z.z * rhs.z.z + self.z.w * rhs.w.z,
-                self.z.x * rhs.x.w + self.z.y * rhs.y.w + self.z.z * rhs.z.w + self.z.w * rhs.w.w,
-            ),
-            w: Vec4::new(
-                self.w.x * rhs.x.x + self.w.y * rhs.y.x + self.w.z * rhs.z.x + self.w.w * rhs.w.x,
-                self.w.x * rhs.x.y + self.w.y * rhs.y.y + self.w.z * rhs.z.y + self.w.w * rhs.w.y,
-                self.w.x * rhs.x.z + self.w.y * rhs.y.z + self.w.z * rhs.z.z + self.w.w * rhs.w.z,
-                self.w.x * rhs.x.w + self.w.y * rhs.y.w + self.w.z * rhs.z.w + self.w.w * rhs.w.w,
-            ),
+            m00: self.m00 * rhs.m00 + self.m01 * rhs.m10 + self.m02 * rhs.m20 + self.m03 * rhs.m30,
+            m01: self.m00 * rhs.m01 + self.m01 * rhs.m11 + self.m02 * rhs.m21 + self.m03 * rhs.m31,
+            m02: self.m00 * rhs.m02 + self.m01 * rhs.m12 + self.m02 * rhs.m22 + self.m03 * rhs.m32,
+            m03: self.m00 * rhs.m03 + self.m01 * rhs.m13 + self.m02 * rhs.m23 + self.m03 * rhs.m33,
+            m10: self.m10 * rhs.m00 + self.m11 * rhs.m10 + self.m12 * rhs.m20 + self.m13 * rhs.m30,
+            m11: self.m10 * rhs.m01 + self.m11 * rhs.m11 + self.m12 * rhs.m21 + self.m13 * rhs.m31,
+            m12: self.m10 * rhs.m02 + self.m11 * rhs.m12 + self.m12 * rhs.m22 + self.m13 * rhs.m32,
+            m13: self.m10 * rhs.m03 + self.m11 * rhs.m13 + self.m12 * rhs.m23 + self.m13 * rhs.m33,
+            m20: self.m20 * rhs.m00 + self.m21 * rhs.m10 + self.m22 * rhs.m20 + self.m23 * rhs.m30,
+            m21: self.m20 * rhs.m01 + self.m21 * rhs.m11 + self.m22 * rhs.m21 + self.m23 * rhs.m31,
+            m22: self.m20 * rhs.m02 + self.m21 * rhs.m12 + self.m22 * rhs.m22 + self.m23 * rhs.m32,
+            m23: self.m20 * rhs.m03 + self.m21 * rhs.m13 + self.m22 * rhs.m23 + self.m23 * rhs.m33,
+            m30: self.m30 * rhs.m00 + self.m31 * rhs.m10 + self.m32 * rhs.m20 + self.m33 * rhs.m30,
+            m31: self.m30 * rhs.m01 + self.m31 * rhs.m11 + self.m32 * rhs.m21 + self.m33 * rhs.m31,
+            m32: self.m30 * rhs.m02 + self.m31 * rhs.m12 + self.m32 * rhs.m22 + self.m33 * rhs.m32,
+            m33: self.m30 * rhs.m03 + self.m31 * rhs.m13 + self.m32 * rhs.m23 + self.m33 * rhs.m33,
         }
     }
 }
@@ -693,11 +801,20 @@ where
 
     fn mul(self, rhs: Vec4<T>) -> Self::Output {
         Self::Output {
-            x: self.x.x * rhs.x + self.x.y * rhs.y + self.x.z * rhs.z + self.x.w * rhs.w,
-            y: self.y.x * rhs.x + self.y.y * rhs.y + self.y.z * rhs.z + self.y.w * rhs.w,
-            z: self.z.x * rhs.x + self.z.y * rhs.y + self.z.z * rhs.z + self.z.w * rhs.w,
-            w: self.w.x * rhs.x + self.w.y * rhs.y + self.w.z * rhs.z + self.w.w * rhs.w,
+            x: self.m00 * rhs.x + self.m01 * rhs.y + self.m02 * rhs.z + self.m03 * rhs.w,
+            y: self.m10 * rhs.x + self.m11 * rhs.y + self.m12 * rhs.z + self.m13 * rhs.w,
+            z: self.m20 * rhs.x + self.m21 * rhs.y + self.m22 * rhs.z + self.m23 * rhs.w,
+            w: self.m30 * rhs.x + self.m31 * rhs.y + self.m32 * rhs.z + self.m33 * rhs.w,
         }
+    }
+}
+
+impl<T> AsRef<[T; 16]> for Mat4<T>
+where
+    T: Float,
+{
+    fn as_ref(&self) -> &[T; 16] {
+        unsafe { std::mem::transmute(self) }
     }
 }
 
@@ -795,10 +912,22 @@ where
 {
     fn from(value: [[T; 4]; 4]) -> Self {
         Mat4 {
-            x: (value[0][0], value[0][1], value[0][2], value[0][3]).into(),
-            y: (value[1][0], value[1][1], value[1][2], value[1][3]).into(),
-            z: (value[2][0], value[2][1], value[2][2], value[2][3]).into(),
-            w: (value[3][0], value[3][1], value[3][2], value[3][3]).into(),
+            m00: value[0][0],
+            m01: value[0][1],
+            m02: value[0][2],
+            m03: value[0][3],
+            m10: value[1][0],
+            m11: value[1][1],
+            m12: value[1][2],
+            m13: value[1][3],
+            m20: value[2][0],
+            m21: value[2][1],
+            m22: value[2][2],
+            m23: value[2][3],
+            m30: value[3][0],
+            m31: value[3][1],
+            m32: value[3][2],
+            m33: value[3][3],
         }
     }
 }
@@ -811,10 +940,22 @@ where
 {
     fn from(value: [T; 16]) -> Self {
         Mat4 {
-            x: (value[0], value[1], value[2], value[3]).into(),
-            y: (value[4], value[5], value[6], value[7]).into(),
-            z: (value[8], value[9], value[10], value[11]).into(),
-            w: (value[12], value[13], value[14], value[15]).into(),
+            m00: value[0],
+            m01: value[1],
+            m02: value[2],
+            m03: value[3],
+            m10: value[4],
+            m11: value[5],
+            m12: value[6],
+            m13: value[7],
+            m20: value[8],
+            m21: value[9],
+            m22: value[10],
+            m23: value[11],
+            m30: value[12],
+            m31: value[13],
+            m32: value[14],
+            m33: value[15],
         }
     }
 }
