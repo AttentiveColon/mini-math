@@ -20,6 +20,7 @@ pub trait VectorOps {
     fn normalize(self) -> Self;
     fn distance(self, other: Self) -> Self;
     fn dot(self, other: Self) -> Self::Float;
+    fn cross(self, other: Self) -> Self;
     fn angle(self, other: Self) -> Self::Float;
     fn lerp(self, other: Self, frac: Self::Float) -> Self;
     fn nlerp(self, other: Self, frac: Self::Float) -> Self;
@@ -157,6 +158,10 @@ where
 
     fn dot(self, other: Self) -> Self::Float {
         (self.x * other.x) + (self.y * other.y)
+    }
+
+    fn cross(self, _other: Self) -> Self {
+        todo!()
     }
 
     fn angle(self, other: Self) -> Self::Float {
@@ -386,6 +391,14 @@ where
 
     fn dot(self, other: Self) -> Self::Float {
         (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
+    }
+
+    fn cross(self, other: Self) -> Self {
+        Vec3::new(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
     }
 
     fn angle(self, other: Self) -> Self::Float {
@@ -635,6 +648,10 @@ where
 
     fn dot(self, other: Self) -> Self::Float {
         (self.x * other.x) + (self.y * other.y) + (self.z * other.z) + (self.w * other.w)
+    }
+
+    fn cross(self, _other: Self) -> Self {
+        todo!()
     }
 
     fn angle(self, other: Self) -> Self::Float {

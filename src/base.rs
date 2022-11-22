@@ -1,4 +1,8 @@
-use std::fmt::Display;
+use std::{
+    cmp::PartialEq,
+    fmt::Display,
+    ops::{AddAssign, MulAssign, SubAssign},
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -10,7 +14,7 @@ pub const RADIAN: f64 = 57.2957795131;
 // Traits
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-pub trait Float: Display + Copy {
+pub trait Float: Display + Copy + AddAssign + SubAssign + MulAssign + PartialEq {
     fn sqrt(self) -> Self;
     fn sin(self) -> Self;
     fn cos(self) -> Self;
@@ -21,6 +25,7 @@ pub trait Float: Display + Copy {
     fn one() -> Self;
     fn zero() -> Self;
     fn neg_one() -> Self;
+    fn one_half() -> Self;
 
     fn to_degrees(self) -> Self;
     fn to_radians(self) -> Self;
@@ -60,6 +65,10 @@ impl Float for f32 {
 
     fn neg_one() -> Self {
         -1.0f32
+    }
+
+    fn one_half() -> Self {
+        0.5f32
     }
 
     fn to_degrees(self) -> Self {
@@ -110,6 +119,10 @@ impl Float for f64 {
 
     fn neg_one() -> Self {
         -1.0f64
+    }
+
+    fn one_half() -> Self {
+        0.5f64
     }
 
     fn to_degrees(self) -> Self {

@@ -1,5 +1,6 @@
 pub mod base;
 pub mod matrix;
+pub mod quaternion;
 pub mod vector;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8,6 +9,7 @@ pub mod vector;
 
 pub use base::Float;
 pub use matrix::{Mat2, Mat3, Mat4, Matrix, MatrixOps};
+pub use quaternion::Quaternion;
 pub use vector::{Vec2, Vec3, Vec4, Vector, VectorOps};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
