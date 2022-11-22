@@ -9,7 +9,7 @@ pub mod vector;
 
 pub use base::Float;
 pub use matrix::{Mat2, Mat3, Mat4, Matrix, MatrixOps};
-pub use quaternion::Quaternion;
+pub use quaternion::{rotate_on_axis, Quaternion};
 pub use vector::{Vec2, Vec3, Vec4, Vector, VectorOps};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
